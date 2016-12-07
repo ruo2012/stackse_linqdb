@@ -1,0 +1,634 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit http://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>C:\Users\Administrator\Desktop\app</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/Antlr3.Runtime.dll">
+      <publishTime>11/30/2016 17:40:23</publishTime>
+    </File>
+    <File Include="bin/BookSleeve.dll">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/de/Microsoft.Data.Edm.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/de/Microsoft.Data.OData.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/de/Microsoft.Data.Services.Client.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/de/System.Spatial.resources.dll">
+      <publishTime>03/03/2016 16:31:23</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.dll">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.SqlServer.dll">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/es/Microsoft.Data.Edm.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/es/Microsoft.Data.OData.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/es/Microsoft.Data.Services.Client.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/es/System.Spatial.resources.dll">
+      <publishTime>03/03/2016 16:31:23</publishTime>
+    </File>
+    <File Include="bin/fr/Microsoft.Data.Edm.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/fr/Microsoft.Data.OData.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/fr/Microsoft.Data.Services.Client.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/fr/System.Spatial.resources.dll">
+      <publishTime>03/03/2016 16:31:23</publishTime>
+    </File>
+    <File Include="bin/HtmlAgilityPack.dll">
+      <publishTime>09/22/2016 18:22:22</publishTime>
+    </File>
+    <File Include="bin/Indexer.dll">
+      <publishTime>09/28/2016 16:49:27</publishTime>
+    </File>
+    <File Include="bin/it/Microsoft.Data.Edm.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/it/Microsoft.Data.OData.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/it/Microsoft.Data.Services.Client.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/it/System.Spatial.resources.dll">
+      <publishTime>03/03/2016 16:31:23</publishTime>
+    </File>
+    <File Include="bin/IvanAkcheurov.Commons.dll">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/IvanAkcheurov.NClassify.dll">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/IvanAkcheurov.NTextCat.Lib.dll">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/IvanAkcheurov.NTextCat.Lib.Legacy.dll">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/ja/Microsoft.Data.Edm.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/ja/Microsoft.Data.OData.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/ja/Microsoft.Data.Services.Client.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/ja/System.Spatial.resources.dll">
+      <publishTime>03/03/2016 16:31:23</publishTime>
+    </File>
+    <File Include="bin/ko/Microsoft.Data.Edm.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/ko/Microsoft.Data.OData.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/ko/Microsoft.Data.Services.Client.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/ko/System.Spatial.resources.dll">
+      <publishTime>03/03/2016 16:31:23</publishTime>
+    </File>
+    <File Include="bin/LevelDB.NET.dll">
+      <publishTime>11/29/2016 17:30:08</publishTime>
+    </File>
+    <File Include="bin/LinqDb.dll">
+      <publishTime>11/29/2016 17:30:08</publishTime>
+    </File>
+    <File Include="bin/LM/afrikaans.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/albanian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/amharic-utf.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/arabic-iso8859_6.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/arabic-windows1256.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/armenian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/basque.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/belarus-windows1251.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/bosnian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/breton.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/bulgarian-iso8859_5.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/catalan.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/chinese-big5.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/chinese-gb2312.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/croatian-ascii.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/czech-iso8859_2.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/danish.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/dutch.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/english.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/esperanto.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/estonian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/finnish.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/french.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/frisian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/georgian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/german.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/greek-iso8859-7.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/hebrew-iso8859_8.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/hindi.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/hungarian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/icelandic.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/indonesian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/irish.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/italian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/japanese-euc_jp.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/japanese-shift_jis.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/korean.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/latin.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/latvian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/lithuanian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/malay.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/manx.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/marathi.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/mingo.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/nepali.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/norwegian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/persian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/polish.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/portuguese.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/quechua.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/romanian.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/rumantsch.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/russian-cp866.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/russian-iso8859_5.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/russian-koi8_r.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/russian-windows1251.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/sanskrit.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/scots.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/scots_gaelic.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/serbian-ascii.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/slovak-ascii.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/slovak-windows1250.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/slovenian-ascii.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/slovenian-iso8859_2.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/spanish.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/swahili.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/swedish.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/tagalog.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/tamil.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/thai.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/turkish.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/ukrainian-koi8_u.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/vietnamese.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/welsh.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/LM/yiddish-utf.lm">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.Identity.Core.dll">
+      <publishTime>11/30/2016 17:40:28</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.Identity.EntityFramework.dll">
+      <publishTime>11/30/2016 17:40:30</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.Identity.Owin.dll">
+      <publishTime>11/30/2016 17:40:31</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Data.Edm.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Data.OData.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Data.Services.Client.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.dll">
+      <publishTime>11/30/2016 17:40:39</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Host.SystemWeb.dll">
+      <publishTime>11/30/2016 17:40:41</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.Cookies.dll">
+      <publishTime>11/30/2016 17:40:43</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.dll">
+      <publishTime>11/30/2016 17:40:42</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.Facebook.dll">
+      <publishTime>11/30/2016 17:40:45</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.Google.dll">
+      <publishTime>11/30/2016 17:40:46</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.MicrosoftAccount.dll">
+      <publishTime>11/30/2016 17:40:47</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.OAuth.dll">
+      <publishTime>11/30/2016 17:40:49</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.Twitter.dll">
+      <publishTime>11/30/2016 17:40:51</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Web.Infrastructure.dll">
+      <publishTime>11/30/2016 17:40:51</publishTime>
+    </File>
+    <File Include="bin/Microsoft.WindowsAzure.Storage.dll">
+      <publishTime>03/03/2016 16:31:23</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>11/30/2016 17:40:52</publishTime>
+    </File>
+    <File Include="bin/Owin.dll">
+      <publishTime>11/30/2016 17:40:53</publishTime>
+    </File>
+    <File Include="bin/protobuf-net.dll">
+      <publishTime>11/29/2016 17:30:08</publishTime>
+    </File>
+    <File Include="bin/RobotsTxt.dll">
+      <publishTime>09/22/2016 18:22:22</publishTime>
+    </File>
+    <File Include="bin/ru/Microsoft.Data.Edm.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/ru/Microsoft.Data.OData.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/ru/Microsoft.Data.Services.Client.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/ru/System.Spatial.resources.dll">
+      <publishTime>03/03/2016 16:31:23</publishTime>
+    </File>
+    <File Include="bin/Search.dll">
+      <publishTime>12/07/2016 13:19:15</publishTime>
+    </File>
+    <File Include="bin/StackData.dll">
+      <publishTime>12/07/2016 13:19:15</publishTime>
+    </File>
+    <File Include="bin/StemmersNet.dll">
+      <publishTime>03/03/2016 16:31:23</publishTime>
+    </File>
+    <File Include="bin/System.Spatial.dll">
+      <publishTime>03/03/2016 16:31:23</publishTime>
+    </File>
+    <File Include="bin/System.Web.Helpers.dll">
+      <publishTime>11/30/2016 17:40:36</publishTime>
+    </File>
+    <File Include="bin/System.Web.Mvc.dll">
+      <publishTime>11/30/2016 17:40:32</publishTime>
+    </File>
+    <File Include="bin/System.Web.Optimization.dll">
+      <publishTime>11/30/2016 17:40:34</publishTime>
+    </File>
+    <File Include="bin/System.Web.Razor.dll">
+      <publishTime>11/30/2016 17:40:33</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Deployment.dll">
+      <publishTime>11/30/2016 17:40:36</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.dll">
+      <publishTime>11/30/2016 17:40:36</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Razor.dll">
+      <publishTime>11/30/2016 17:40:36</publishTime>
+    </File>
+    <File Include="bin/TableOperations.dll">
+      <publishTime>09/28/2016 16:49:26</publishTime>
+    </File>
+    <File Include="bin/TableOperations.XmlSerializers.dll">
+      <publishTime>09/28/2016 16:49:26</publishTime>
+    </File>
+    <File Include="bin/Utils.dll">
+      <publishTime>09/28/2016 16:40:50</publishTime>
+    </File>
+    <File Include="bin/WebGrease.dll">
+      <publishTime>11/30/2016 17:40:55</publishTime>
+    </File>
+    <File Include="bin/WebMvc.dll">
+      <publishTime>12/07/2016 13:19:16</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/Microsoft.Data.Edm.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/Microsoft.Data.OData.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/Microsoft.Data.Services.Client.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Spatial.resources.dll">
+      <publishTime>03/03/2016 16:31:23</publishTime>
+    </File>
+    <File Include="bin/zh-Hant/Microsoft.Data.Edm.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/zh-Hant/Microsoft.Data.OData.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/zh-Hant/Microsoft.Data.Services.Client.resources.dll">
+      <publishTime>03/03/2016 16:31:22</publishTime>
+    </File>
+    <File Include="bin/zh-Hant/System.Spatial.resources.dll">
+      <publishTime>03/03/2016 16:31:23</publishTime>
+    </File>
+    <File Include="Content/bootstrap.css">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Content/bootstrap.min.css">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Content/Site.css">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="favicon.ico">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.eot">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.svg">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.ttf">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.woff">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Global.asax">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>09/20/2016 12:53:21</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.min.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.10.2.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.10.2.min.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.10.2.min.map">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/jquery.validate.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/jquery.validate.min.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/jquery.validate.unobtrusive.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/jquery.validate.unobtrusive.min.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/jscroll.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/modernizr-2.6.2.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/respond.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/respond.min.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Scripts/_references.js">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Account/ExternalLoginConfirmation.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Account/ExternalLoginFailure.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Account/Login.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Account/Manage.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Account/Register.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Account/_ChangePasswordPartial.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Account/_ExternalLoginsListPartial.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Account/_RemoveAccountPartial.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Account/_SetPasswordPartial.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Home/About.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Home/Contact.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Home/Errors.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Home/Index.cshtml">
+      <publishTime>12/01/2016 17:50:27</publishTime>
+    </File>
+    <File Include="Views/Home/Log.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Home/SearchPage.cshtml">
+      <publishTime>12/02/2016 14:04:37</publishTime>
+    </File>
+    <File Include="Views/Home/Stats.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Home/Synonyms.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Shared/Error.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Shared/_Layout.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Shared/_LoginPartial.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/Web.config">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Views/_ViewStart.cshtml">
+      <publishTime>03/03/2016 16:31:21</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>12/07/2016 13:19:22</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

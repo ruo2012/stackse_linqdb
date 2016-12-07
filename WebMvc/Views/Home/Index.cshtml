@@ -1,0 +1,50 @@
+﻿@model  WebMvc.Models.SearchData
+
+
+@{
+    ViewBag.Title = "Search";
+}
+<form id="data_form" action="/" method="post" onsubmit="return submitHandler()">
+
+    <div style="margin-top:30px;">
+        <input type="hidden" id="Debug" name="Debug" value="@(Model.Debug ? "true" : "false")" />
+        <input type="text" style="max-width:600px;" class="form-control search-query" placeholder="the shorter the better" id="Query" name="Query" value="@Model.Query" />
+        @*<input type="hidden" id="TotalSteps" name="TotalSteps" value="" />
+            <input type="hidden" id="IsNext" name="IsNext" value="" />
+            <input type="hidden" id="IsPrev" name="IsPrev" value="" />
+            <input type="hidden" id="Page" name="Page" value="" />
+            <input type="hidden" id="StepInfo" name="StepInfo" value="@Model.StepInfo" />
+            <input type="hidden" id="MetaRes" name="MetaRes" value="@Model.MetaRes" />*@
+    </div>
+
+
+    <script type="text/javascript">
+        window.onload = function () {
+            document.getElementById("Query").focus();
+        };
+        var total;
+        var submitHandler = function () {
+            total = 1;
+            $("#result").html("<br/><span>Searching...</span>");
+            $("#result_right").html("");
+            var data = $('#data_form').serialize();
+            $.post("/Home/SearchPage", data, function (res) {
+                var fields = res.html.split("<span>SEPARATOR</span>");
+                if (fields.length == 2) {
+                    $("#result").html(fields[0]);
+                    $("#result_right").append(fields[1]);
+                }
+                else {
+                    $("#result").html(fields[0]);
+                }                 
+            });
+            return false;
+        }
+    </script>
+
+
+    <div id="result_right" style="float:right;text-align:justify;margin-top:10px;" class="col-md-6">
+    </div>
+    <div id="result" style="overflow: hidden;text-align:justify;margin-top:10px; /*margin-left:-15px;*/" class="col-md-6">
+    </div>
+</form>
