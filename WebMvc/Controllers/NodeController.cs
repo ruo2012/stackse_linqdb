@@ -162,15 +162,15 @@ namespace WebMvc.Controllers
             }
             else
             {
-                var mres = SearchApi.SearchMain(data.Query, data.Which);
-                var main_links = mres.SelectMany(z => z.Items, (p, c) => new WebMvc.Models.Result()
+                var mres = SearchApi.SearchMain(data.Query);
+                var main_links = mres.Select(z => new WebMvc.Models.Result()
                 {
                     IsMeta = false,
-                    Description = GetWords(c.Fragment, words),
-                    Title = GetWords(c.Title, words),
-                    Score = c.Score,
-                    Url = "http://stackoverflow.com/questions/" + c.Id,
-                    Id = c.Id
+                    Description = GetWords(z.Fragment, words),
+                    Title = GetWords(z.Title, words),
+                    Score = z.Score,
+                    Url = "http://stackoverflow.com/questions/" + z.Id,
+                    Id = z.Id
                 })
                 //.Where(f => !title_links.Any(z => z.Id == f.Id))
                 .ToList();

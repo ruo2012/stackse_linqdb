@@ -87,14 +87,14 @@ namespace StackData
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public string Text { get; set; }
+        public byte[] Text { get; set; }
         public int Votes { get; set; }
     }
     public class PostFragment
     {
         public int Id { get; set; }
         public int QuestionId { get; set; }
-        public byte[] Text { get; set; }
+        public string Text { get; set; }
     }
     public class FragmentWord
     {

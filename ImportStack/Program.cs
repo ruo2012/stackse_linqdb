@@ -17,21 +17,18 @@ namespace ImportStack
         {
             DateTime start_time = DateTime.Now;
             //step 1: import data from xml files
-            ImportData.Import(@"C:\Users\Administrator\Documents\stackoverflow\");
+            //ImportData.Import(@"C:\Users\Administrator\Documents\stackoverflow\");
         
             ////step2: prepare searchable data
-            string path = @"C:\Users\Administrator\Documents\stackoverflow\WHOLE_DATA";
-            string p1 = @"C:\Users\Administrator\Documents\stackoverflow\p1";
-            string p2 = @"C:\Users\Administrator\Documents\stackoverflow\p2";
-            string p3 = @"C:\Users\Administrator\Documents\stackoverflow\p3";
-            string p4 = @"C:\Users\Administrator\Documents\stackoverflow\p4";
+            string whole_path = @"C:\Users\Administrator\Documents\stackoverflow\WHOLE_DATA";
+            string interm_path = @"C:\Users\Administrator\Documents\stackoverflow\INTERM_DATA";
+            string final_path = @"C:\Users\Administrator\Documents\stackoverflow\FINAL_DATA";
 
-            int start = 6000000;
-            int total = 2000000;
+            int start = 0;
+            int total = 2400000;
 
-            DataPreparation.MakeSearchableData(path, p1, p2, p3, p4, start, total);
-            DataPreparation.MakeFragments(p1, p2, p3, p4);
-            DataPreparation.MakeFragmentWords(p1, p2, p3, p4);
+            DataPreparation.MakeSearchableData(whole_path, interm_path, final_path, start, total);
+            DataPreparation.MakeFragments(interm_path, final_path);
 
             Console.WriteLine("Time: {0} min", (DateTime.Now - start_time).TotalMinutes);
         }

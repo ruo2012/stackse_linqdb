@@ -51,7 +51,6 @@ namespace WebMvc.Models
         public bool IsMeta { get; set; }
         public bool WasLoadingStuff { get; set; }
         public bool TitleSearch { get; set; }
-        public int Which { get; set; }
     }
 
     public class PhaseResult

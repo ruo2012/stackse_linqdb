@@ -9,41 +9,34 @@ namespace Search
 {
     public class SearchApi
     {
-        static string p1 = @"C:\Users\Administrator\Documents\stackoverflow\p1";
-        static string p2 = @"C:\Users\Administrator\Documents\stackoverflow\p2";
-        static string p3 = @"C:\Users\Administrator\Documents\stackoverflow\p3";
-        static string p4 = @"C:\Users\Administrator\Documents\stackoverflow\p4";
+        static string frag_db = @"C:\Users\Administrator\Documents\stackoverflow\FINAL_DATA";
 
-        static Db db1 { get; set; }
-        static Db db2 { get; set; }
+        static Db db { get; set; }
 
         public static void Init()
         {
-            if (db1 == null)
+            if (db == null)
             {
-                db1 = new Db(p3);
-                db2 = new Db(p4);
+                db = new Db(frag_db);
             }
         }
         public static void Dispose()
         {
-            if (db1 != null)
+            if (db != null)
             {
-                db1.Dispose();
-                db1 = null;
-                db2.Dispose();
-                db2 = null;
+                db.Dispose();
+                db = null;
             }
         }
         public static List<ResultItem> SearchTitles(string query)
         {
             Init();
-            return SearchLogic.SearchTitles(db1, db2, query);
+            return SearchLogic.SearchTitles(db, query);
         }
-        public static List<Result> SearchMain(string query, int which)
+        public static List<ResultItem> SearchMain(string query)
         {
             Init();
-            return SearchLogic.SearchText(db1, db2, which, query);
+            return SearchLogic.SearchFragments(db, query);
         }
 
     }

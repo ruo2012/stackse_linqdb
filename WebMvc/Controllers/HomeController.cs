@@ -77,178 +77,87 @@ namespace WebMvc.Controllers
                     data.Query = data.Query.Substring(0, ind);
                 }
             }
-            var nodes = ConfigurationManager.AppSettings["Nodes"] + "";
-            var ns = nodes.Split(";".ToCharArray());
-            var tasks = new List<Task<SearchData>>();
-            data.TitleSearch = true;
-            foreach (var n in ns)
-            {
-                var t = Task.Run<SearchData>(() =>
-                    {
-                        try
-                        { 
-                            var res = InterMachine.SearchNode(n, data);
-                            return JsonConvert.DeserializeObject<SearchData>(res);
-                        }
-                        catch (Exception ex)
-                        {
-                            //MyTable.LogInfo(string.Format("Master ERROR searching node {0}: ", n), ex, true);
-                            return null;
-                        }
-                    });
-                tasks.Add(t);
-            }
 
+            object _lock = new object();
             var res_links = new List<WebMvc.Models.Result>();
-            foreach (var t in tasks)
-            {
-                if (t.Result != null && t.Result.Links != null)
-                {
-                    res_links.AddRange(t.Result.Links);
-                }
-            }
 
-            if (res_links.Count() < 10)
-            {
-                data.TitleSearch = false;
-                data.Which = 0;
-                foreach (var n in ns)
-                {
-                    if (n.Contains("7777"))
-                    {
-                        continue;
-                    }
-                    var t = Task.Run<SearchData>(() =>
-                    {
-                        try
-                        {
-                            var res = InterMachine.SearchNode(n, data);
-                            return JsonConvert.DeserializeObject<SearchData>(res);
-                        }
-                        catch (Exception ex)
-                        {
-                            //MyTable.LogInfo(string.Format("Master ERROR searching node {0}: ", n), ex, true);
-                            return null;
-                        }
-                    });
-                    tasks.Add(t);
-                }
-                foreach (var t in tasks)
-                {
-                    if (t.Result != null && t.Result.Links != null)
-                    {
-                        res_links.AddRange(t.Result.Links);
-                    }
-                }
-            }
+            var title_search = Task.Run(() =>
+                   {
+                       var nodes = ConfigurationManager.AppSettings["Nodes"] + "";
+                       var ns = nodes.Split(";".ToCharArray());
+                       var tasks = new List<Task<SearchData>>();
+                       data.TitleSearch = true;
+                       foreach (var n in ns)
+                       {
+                           var t = Task.Run<SearchData>(() =>
+                               {
+                                   try
+                                   {
+                                       var res = InterMachine.SearchNode(n, data);
+                                       return JsonConvert.DeserializeObject<SearchData>(res);
+                                   }
+                                   catch (Exception ex)
+                                   {
+                                       //MyTable.LogInfo(string.Format("Master ERROR searching node {0}: ", n), ex, true);
+                                       return null;
+                                   }
+                               });
+                           tasks.Add(t);
+                       }
+                       foreach (var t in tasks)
+                       {
+                           if (t.Result != null && t.Result.Links != null)
+                           {
+                               lock (_lock)
+                               {
+                                   res_links.AddRange(t.Result.Links);
+                               }
+                           }
+                       }
+                   });
 
-            if (res_links.Count() < 10)
-            {
-                data.TitleSearch = false;
-                data.Which = 0;
-                foreach (var n in ns)
-                {
-                    if (n.Contains("7979"))
-                    {
-                        continue;
-                    }
-                    var t = Task.Run<SearchData>(() =>
-                    {
-                        try
-                        {
-                            var res = InterMachine.SearchNode(n, data);
-                            return JsonConvert.DeserializeObject<SearchData>(res);
-                        }
-                        catch (Exception ex)
-                        {
-                            //MyTable.LogInfo(string.Format("Master ERROR searching node {0}: ", n), ex, true);
-                            return null;
-                        }
-                    });
-                    tasks.Add(t);
-                }
-                foreach (var t in tasks)
-                {
-                    if (t.Result != null && t.Result.Links != null)
-                    {
-                        res_links.AddRange(t.Result.Links);
-                    }
-                }
-            }
+            var main_search = Task.Run(() =>
+                  {
+                      var nodes = ConfigurationManager.AppSettings["Nodes"] + "";
+                      var ns = nodes.Split(";".ToCharArray());
+                      var tasks = new List<Task<SearchData>>();
+                      data.TitleSearch = false;
+                      foreach (var n in ns)
+                      {
+                          var t = Task.Run<SearchData>(() =>
+                          {
+                              try
+                              {
+                                  var res = InterMachine.SearchNode(n, data);
+                                  return JsonConvert.DeserializeObject<SearchData>(res);
+                              }
+                              catch (Exception ex)
+                              {
+                                  //MyTable.LogInfo(string.Format("Master ERROR searching node {0}: ", n), ex, true);
+                                  return null;
+                              }
+                          });
+                          tasks.Add(t);
+                      }
+                      foreach (var t in tasks)
+                      {
+                          if (t.Result != null && t.Result.Links != null)
+                          {
+                              lock (_lock)
+                              {
+                                  res_links.AddRange(t.Result.Links);
+                              }
+                          }
+                      }
+                  });
 
-            if (res_links.Count() < 10)
-            {
-                data.TitleSearch = false;
-                data.Which = 1;
-                foreach (var n in ns)
-                {
-                    if (n.Contains("7777"))
-                    {
-                        continue;
-                    }
-                    var t = Task.Run<SearchData>(() =>
-                    {
-                        try
-                        {
-                            var res = InterMachine.SearchNode(n, data);
-                            return JsonConvert.DeserializeObject<SearchData>(res);
-                        }
-                        catch (Exception ex)
-                        {
-                            //MyTable.LogInfo(string.Format("Master ERROR searching node {0}: ", n), ex, true);
-                            return null;
-                        }
-                    });
-                    tasks.Add(t);
-                }
-                foreach (var t in tasks)
-                {
-                    if (t.Result != null && t.Result.Links != null)
-                    {
-                        res_links.AddRange(t.Result.Links);
-                    }
-                }
-            }
+            title_search.Wait();
+            main_search.Wait();
 
-            if (res_links.Count() < 10)
-            {
-                data.TitleSearch = false;
-                data.Which = 1;
-                foreach (var n in ns)
-                {
-                    if (n.Contains("7979"))
-                    {
-                        continue;
-                    }
-                    var t = Task.Run<SearchData>(() =>
-                    {
-                        try
-                        {
-                            var res = InterMachine.SearchNode(n, data);
-                            return JsonConvert.DeserializeObject<SearchData>(res);
-                        }
-                        catch (Exception ex)
-                        {
-                            //MyTable.LogInfo(string.Format("Master ERROR searching node {0}: ", n), ex, true);
-                            return null;
-                        }
-                    });
-                    tasks.Add(t);
-                }
-                foreach (var t in tasks)
-                {
-                    if (t.Result != null && t.Result.Links != null)
-                    {
-                        res_links.AddRange(t.Result.Links);
-                    }
-                }
-            }
-
-            data.Links = res_links.Where(f => f.IsMeta).OrderByDescending(f => f.Score).Take(5).ToList();
-            data.Links.AddRange(res_links.Where(f => !f.IsMeta && !data.Links.Any(z => z.Id == f.Id)).OrderByDescending(f => f.Score).Take(10 - data.Links.Count()));
+            data.Links = res_links.Where(f => f.IsMeta).OrderByDescending(f => f.Score).Take(10).ToList();
             if (data.Links.Count() < 10)
-            { 
-                data.Links.AddRange(res_links.Where(f => f.IsMeta && !data.Links.Any(z => z.Id == f.Id)).OrderByDescending(f => f.Score).Take(10 - data.Links.Count()).ToList());
+            {
+                data.Links.AddRange(res_links.Where(f => !f.IsMeta && !data.Links.Any(z => z.Id == f.Id)).OrderByDescending(f => f.Score).Take(10 - data.Links.Count()).ToList());
             }
 
             var result = RenderPartialViewToString(this, "SearchPage", data);

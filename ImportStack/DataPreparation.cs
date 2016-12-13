@@ -13,34 +13,28 @@ namespace ImportStack
 {
     class DataPreparation
     {
-        public static void MakeSearchableData(string path, string p1, string p2, string p3, string p4, int start, int total)
+        public static void MakeSearchableData(string whole_path, string interm_path, string final_path, int start, int total)
         {
-            var db = new Db(path);
-            var db1 = new Db(p1);
-            var db2 = new Db(p2);
-            var db3 = new Db(p3);
-            var db4 = new Db(p4);
+            var whole_db = new Db(whole_path);
+            var interm_db = new Db(interm_path);
+            var final_db = new Db(final_path);
 
-            int ctotal = 0;
             int current = 0;
             var list = new List<WholePost>();
-            var dic = new Dictionary<int, List<WholePost>>() { { 0, new List<WholePost>() }, { 1, new List<WholePost>() }, { 2, new List<WholePost>() }, { 3, new List<WholePost>() } };
-            var answs = new Dictionary<int, List<AnswerFragment>>() { { 0, new List<AnswerFragment>() }, { 1, new List<AnswerFragment>() }, { 2, new List<AnswerFragment>() }, { 3, new List<AnswerFragment>() } };
-            for (int i = 0; ; i++)
+            var posts = new List<WholePost>();
+            var answs = new List<AnswerFragment>();
+            int i = whole_db.Table<Question>().OrderBy(f => f.Id).Skip(start).Take(1).Select(f => new { f.Id }).First().Id;
+            int fin = whole_db.Table<Question>().OrderByDescending(f => f.Id).Take(1).Select(f => new { f.Id }).First().Id;
+            for (; i < fin; i++)
             {
                 StringBuilder text = new StringBuilder();
-                var q = db.Table<Question>().Where(f => f.Id == i).Select(f => new { f.Id, f.Body, f.Title, f.Score }).FirstOrDefault();
+                var q = whole_db.Table<Question>()/*.Intersect(f => f.Id, new List<int> { i })*/.Where(f => f.Id == i).Select(f => new { f.Id, f.Body, f.Title, f.Score }).FirstOrDefault();
                 if (q == null)
                 {
                     continue;
                 }
                 current++;
-                if (current < start)
-                {
-                    continue;
-                }
-                ctotal++;
-                if (ctotal > total)
+                if (current > total)
                 {
                     break;
                 }
@@ -56,7 +50,7 @@ namespace ImportStack
                 var qtext = RemoveMarkdown(Encoding.UTF8.GetString(q.Body)) + Environment.NewLine;
                 text.Append(qtext);
 
-                var comments = db.Table<Comment>().Where(f => f.PostId == q.Id).Select(f => new { f.Text });
+                var comments = whole_db.Table<Comment>()/*.Intersect(f => f.PostId, new List<int> { q.Id })*/.Where(f => f.PostId == q.Id).Select(f => new { f.Text });
                 foreach (var comment in comments)
                 {
                     if (comment.Text == null || comment.Text.Count() == 0)
@@ -68,13 +62,13 @@ namespace ImportStack
                 }
 
                 var adic = new List<KeyValuePair<int, string>>();
-                var answers = db.Table<Answer>().Where(f => f.ParentId == q.Id).Select(f => new { f.Id, f.Body, f.Score });
+                var answers = whole_db.Table<Answer>()/*.Intersect(f => f.ParentId, new List<int> { q.Id })*/.Where(f => f.ParentId == q.Id).Select(f => new { f.Id, f.Body, f.Score });
                 foreach (var answer in answers)
                 {
                     var atext = RemoveMarkdown(Encoding.UTF8.GetString(answer.Body)) + Environment.NewLine;
                     adic.Add(new KeyValuePair<int, string>(answer.Score, atext));
                     text.Append(atext);
-                    var acomments = db.Table<Comment>().Where(f => f.PostId == answer.Id).SelectEntity();
+                    var acomments = whole_db.Table<Comment>()/*.Intersect(f => f.PostId, new List<int> { answer.Id })*/.Where(f => f.PostId == answer.Id).SelectEntity();
                     foreach (var comment in acomments)
                     {
                         if (comment.Text == null || comment.Text.Count() == 0)
@@ -92,7 +86,7 @@ namespace ImportStack
                     fragment.Id = q.Id;
                     var at = qtext.Length > 300 ? qtext.Substring(0, 300) : qtext;
                     fragment.Text = Encoding.UTF8.GetBytes(at);
-                    answs[post.Id % 4].Add(fragment);
+                    answs.Add(fragment);
                 }
                 else
                 {
@@ -101,41 +95,49 @@ namespace ImportStack
                     fragment.Id = q.Id;
                     var at = ba.Value.Length > 300 ? ba.Value.Substring(0, 300) : ba.Value;
                     fragment.Text = Encoding.UTF8.GetBytes(at);
-                    answs[post.Id % 4].Add(fragment);
+                    answs.Add(fragment);
                 }
-                post.Text = text.ToString();
-                dic[post.Id % 4].Add(post);
+                post.Text = Encoding.UTF8.GetBytes(text.ToString());
+                posts.Add(post);
 
-                if (dic.Sum(f => f.Value.Count()) > 5000)
+                if (posts.Count() > 5000)
                 {
-                    db1.Table<WholePost>().SaveBatch(dic[0]);
-                    db2.Table<WholePost>().SaveBatch(dic[1]);
-                    db3.Table<WholePost>().SaveBatch(dic[2]);
-                    db4.Table<WholePost>().SaveBatch(dic[3]);
-                    dic = new Dictionary<int, List<WholePost>>() { { 0, new List<WholePost>() }, { 1, new List<WholePost>() }, { 2, new List<WholePost>() }, { 3, new List<WholePost>() } }; 
-                    db1.Table<AnswerFragment>().SaveBatch(answs[0]);
-                    db2.Table<AnswerFragment>().SaveBatch(answs[1]);
-                    db3.Table<AnswerFragment>().SaveBatch(answs[2]);
-                    db4.Table<AnswerFragment>().SaveBatch(answs[3]);
-                    answs = new Dictionary<int, List<AnswerFragment>>() { { 0, new List<AnswerFragment>() }, { 1, new List<AnswerFragment>() }, { 2, new List<AnswerFragment>() }, { 3, new List<AnswerFragment>() } };
+                    var interm_posts = new List<WholePost>();
+                    foreach (var p in posts)
+                    {
+                        var ip = new WholePost()
+                        {
+                            Id = p.Id,
+                            Text = p.Text
+                        };
+                        interm_posts.Add(ip);
+                        p.Text = null;
+                    }
+                    interm_db.Table<WholePost>().SaveBatch(interm_posts);
+                    final_db.Table<WholePost>().SaveBatch(posts);
+                    posts = new List<WholePost>();
+                    final_db.Table<AnswerFragment>().SaveBatch(answs);
+                    answs = new List<AnswerFragment>();
                 }
             }
 
-            db1.Table<WholePost>().SaveBatch(dic[0]);
-            db2.Table<WholePost>().SaveBatch(dic[1]);
-            db3.Table<WholePost>().SaveBatch(dic[2]);
-            db4.Table<WholePost>().SaveBatch(dic[3]);
-
-            db1.Table<AnswerFragment>().SaveBatch(answs[0]);
-            db2.Table<AnswerFragment>().SaveBatch(answs[1]);
-            db3.Table<AnswerFragment>().SaveBatch(answs[2]);
-            db4.Table<AnswerFragment>().SaveBatch(answs[3]);
-
-            db1.Dispose();
-            db2.Dispose();
-            db3.Dispose();
-            db4.Dispose();
-            db.Dispose();
+            var interm_posts_ = new List<WholePost>();
+            foreach (var p in posts)
+            {
+                var ip = new WholePost()
+                {
+                    Id = p.Id,
+                    Text = p.Text
+                };
+                interm_posts_.Add(ip);
+                p.Text = null;
+            }
+            interm_db.Table<WholePost>().SaveBatch(interm_posts_);
+            final_db.Table<WholePost>().SaveBatch(posts);
+            final_db.Table<AnswerFragment>().SaveBatch(answs);
+            final_db.Dispose();
+            interm_db.Dispose();
+            whole_db.Dispose();
         }
 
         static int err_count { get; set; }
@@ -160,49 +162,44 @@ namespace ImportStack
             }
         }
 
-        public static void MakeFragments(string p1, string p2, string p3, string p4)
+        public static void MakeFragments(string interm_path, string final_path)
         {
-            var db1 = new Db(p1);
-            var db2 = new Db(p2);
-            var db3 = new Db(p3);
-            var db4 = new Db(p4);
-            var dbs = new List<Db>() { db1, db2, db3, db4 };
-
-            foreach (var db_target in dbs)
+            var interm_db = new Db(interm_path);
+            var final_db = new Db(final_path);
+            List<PostFragment> batch = new List<PostFragment>();
+            int step = 10000;
+            int total = 0;
+            int start = interm_db.Table<WholePost>().OrderBy(f => f.Id).Take(1).Select(f => new { f.Id }).First().Id;
+            int fin = interm_db.Table<WholePost>().OrderByDescending(f => f.Id).Take(1).Select(f => new { f.Id }).First().Id;
+            for (int i = start; i <= fin; i += step)
             {
-                List<PostFragment> batch = new List<PostFragment>();
-                int step = 10000;
-                int total = 0;
-                int start = db_target.Table<WholePost>().OrderBy(f => f.Id).Take(1).Select(f => new { f.Id }).First().Id;
-                for (int i = start; ; i += step)
+                var res = interm_db.Table<WholePost>()
+                                   .Between(f => f.Id, i, i + step, BetweenBoundaries.FromInclusiveToExclusive)
+                                   .Select(f => new { f.Id, f.Text });
+                if (!res.Any())
                 {
-                    var res = db_target.Table<WholePost>()
-                                       .Between(f => f.Id, i, i + step, BetweenBoundaries.FromInclusiveToExclusive)
-                                       .Select(f => new { f.Id, f.Text });
-                    if (!res.Any())
-                    {
-                        break;
-                    }
-
-                    foreach (var post in res)
-                    {
-                        var fragments = GetFragments(post.Text);
-                        foreach (var f in fragments)
-                        {
-                            batch.Add(new PostFragment()
-                            {
-                                QuestionId = post.Id,
-                                Text = Encoding.UTF8.GetBytes(f)
-                            });
-                        }
-                    }
-                    db_target.Table<PostFragment>().SaveBatch(batch);
-                    total += res.Count;
-                    Console.WriteLine(total);
-                    batch = new List<PostFragment>();
+                    continue;
                 }
-                db_target.Dispose();
+
+                foreach (var post in res)
+                {
+                    var fragments = GetFragments(Encoding.UTF8.GetString(post.Text));
+                    foreach (var f in fragments)
+                    {
+                        batch.Add(new PostFragment()
+                        {
+                            QuestionId = post.Id,
+                            Text = f
+                        });
+                    }
+                }
+                final_db.Table<PostFragment>().SaveBatch(batch);
+                total += res.Count;
+                Console.WriteLine(total);
+                batch = new List<PostFragment>();
             }
+            final_db.Dispose();
+            interm_db.Dispose();
         }
 
         public static List<string> GetFragments(string text)
@@ -216,76 +213,6 @@ namespace ImportStack
                 res.Add(nf.Aggregate((a, b) => a + " " + b));
             }
             return res.Where(f => !string.IsNullOrEmpty(f)).ToList();
-        }
-
-        public static void MakeFragmentWords(string p1, string p2, string p3, string p4)
-        {
-            var db1 = new Db(p1);
-            var db2 = new Db(p2);
-            var db3 = new Db(p3);
-            var db4 = new Db(p4);
-            var dbs = new List<Db>() { db1, db2, db3, db4 };
-
-            foreach (var db_target in dbs)
-            {
-                Dictionary<int, FragmentWord> batch = new Dictionary<int, FragmentWord>();
-                int step = 10000;
-                int total = 0;
-                int add = 0;
-                for (int i = 0; ; i += (step + add))
-                {
-                    var res = db_target.Table<PostFragment>()
-                                       .Between(f => f.Id, i, i + step, BetweenBoundaries.FromInclusiveToExclusive)
-                                       .Select(f => new { f.Id, f.QuestionId, f.Text });
-                    if (!res.Any())
-                    {
-                        break;
-                    }
-
-                    int max_id = res.Max(z => z.Id);
-                    int lastq_id = res.Where(z => z.Id == max_id).First().QuestionId;
-                    var more = db_target.Table<PostFragment>().Where(f => f.QuestionId == lastq_id).Select(f => new { f.Id, f.QuestionId, f.Text }).Where(f => f.Id > max_id).ToList();
-                    res.AddRange(more);
-                    add = more.Count;
-
-                    foreach (var post in res)
-                    {
-                        //tmp
-                        //if (db_target.Table<FragmentWord>().Where(f => f.QId == post.QuestionId).Select(f => new { f.Id }).Any())
-                        //{
-                        //    continue;
-                        //}
-                        var text = Encoding.UTF8.GetString(post.Text);
-                        var words = GetDistinctWords(text);
-                        foreach (var w in words)
-                        {
-                            var key = (w + ":" + post.QuestionId).GetHashCode();
-                            if (!batch.ContainsKey(key))
-                            {
-                                var f = new FragmentWord()
-                                {
-                                    FragmentsId = BitConverter.GetBytes(post.Id).ToArray(),
-                                    WordQuestionId = key,
-                                    QId = post.QuestionId
-                                };
-                                batch[key] = f;
-                            }
-                            else
-                            {
-                                var current = batch[key].FragmentsId.ToList();
-                                current.AddRange(BitConverter.GetBytes(post.Id));
-                                batch[key].FragmentsId = current.ToArray();
-                            }
-                        }
-                    }
-                    db_target.Table<FragmentWord>().SaveBatch(batch.Select(f => f.Value).ToList());
-                    total += res.Count;
-                    Console.WriteLine(total);
-                    batch = new Dictionary<int, FragmentWord>();
-                }
-
-                db_target.Dispose();
-            }
         }
 
         public static string AsciiNonReadable
