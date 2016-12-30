@@ -1,13 +1,5 @@
 ﻿@model  WebMvc.Models.SearchData
 
-@if (Model.Debug)
-{
-    if (!Model.NothingFound && !string.IsNullOrEmpty(Model.Query))
-    {
-        <span>Total res: @Model.TotalRes, time @Math.Round((double)Model.SearchTimeMs / 1000, 2) sec. (pre @Model.PreDataPer %, meta @Model.MetaTimePerc %, fetching data @Model.FetchPercent % (DB @Model.DBPercent %, Deserialize @Model.DeserializePercent %) (@Math.Round((double)Model.Size_in_bytes / (double)(1024 * 1024), 2) Mb), fetching sites @Model.CombinePercent %, intersection @Model.IntersectionPercent %, criterias @Model.CriteriasPercent %, steps @Model.TotalSteps, size @(Model.StepSize / 1000) K)</span>
-    }
-}
-
 @if (Model.Links != null)
 {
     int counter = 0;
@@ -54,49 +46,17 @@
                 desc += Html.Encode(d.Token) + " ";
             }
         }
-        if (Model.Debug)
-        {
-            <div style="@(Model.FromCache ? "color:green" : "")">
-                <br />
-                <a href="@result.Url">@Html.Raw(title)</a><br />
-
-                @Math.Round(result.Score)
-                Main @Math.Round(result.Score_dist.MainScore * 100 / result.Score) %,
-                Links @Math.Round(result.Score_dist.LinkScore * 100 / result.Score) %,
-                Index @Math.Round(result.Score_dist.IndexScore * 100 / result.Score) %,
-                Refs @Math.Round(result.Score_dist.RefsScore * 100 / result.Score) %,
-                Url @Math.Round(result.Score_dist.UrlScore * 100 / result.Score) %,
-                Title @Math.Round(result.Score_dist.TitleScore * 100 / result.Score) %,
-                Desc @Math.Round(result.Score_dist.DescriptionScore * 100 / result.Score) %) - Refs @result.Refs <br />
-
-                <span style="font-size:11px;color:gray;">@result.Url</span><br />
-                <span style="word-wrap: break-word">@Html.Raw(desc)</span><br />
-            </div>
-        }
-        else
-        {
-            <div style="@(Model.FromCache ? "color:green" : "")">
-                <br />
-                <a href="@result.Url">@Html.Raw(title)</a><br />
-                <span style="font-size:11px;color:gray;">@result.Url</span><br />
-                <span style="word-wrap: break-word">@Html.Raw(desc)</span><br />
-            </div>
-        }
+        
+        <div>
+            <br />
+            <a href="@result.Url">@Html.Raw(title)</a><br />
+            <span style="font-size:11px;color:gray;">@result.Url</span><br />
+            <span style="word-wrap: break-word">@Html.Raw(desc)</span><br />
+        </div>
     }
 }
 
 @if (Model.Links == null || Model.Links.Count() == 0)
 {
-    switch ((int)Model.Reason)
-    {
-        case (int)WebMvc.Models.NothingFoundReason.QueryTooLong:
-            <br /><b>No results</b>
-            break;
-        case (int)WebMvc.Models.NothingFoundReason.QueryTooShort:
-        <br /><b>No results</b>
-            break;
-        default:
-        <br /><b>No results</b>
-            break;
-    }
+    <br /><b>No results</b>
 }

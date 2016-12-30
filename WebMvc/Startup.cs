@@ -1,14 +1,14 @@
-﻿using Microsoft.Owin;
-using Owin;
+﻿//using Microsoft.Owin;
+//using Owin;
 
-[assembly: OwinStartupAttribute(typeof(WebMvc.Startup))]
+//[assembly: OwinStartupAttribute(typeof(WebMvc.Startup))]
 namespace WebMvc
 {
     public partial class Startup
     {
-        public void Configuration(IAppBuilder app)
-        {
-            ConfigureAuth(app);
-        }
+        //public void Configuration(IAppBuilder app)
+        //{
+        //    ConfigureAuth(app);
+        //}
     }
 }

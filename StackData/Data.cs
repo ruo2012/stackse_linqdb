@@ -96,13 +96,6 @@ namespace StackData
         public int QuestionId { get; set; }
         public string Text { get; set; }
     }
-    public class FragmentWord
-    {
-        public int Id { get; set; }
-        public int WordQuestionId { get; set; } //GetHashCode(wordid+":"+questionid)
-        public byte[] FragmentsId { get; set; }
-        public int QId { get; set; }
-    }
     public class AnswerFragment
     {
         public int Id { get; set; }

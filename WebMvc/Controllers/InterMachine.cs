@@ -15,72 +15,6 @@ namespace WebMvc.Controllers
 {
     public class InterMachine
     {
-        public static void IndexLinks(string node_url, List<Link> links)
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(node_url);
-
-                var content = new StringContent(Compress(JsonConvert.SerializeObject(links)), Encoding.UTF8);
-                var result = client.PostAsync("/Node/IndexLinks", content).Result;
-                var t = result.Content.ReadAsStringAsync().Result;
-            }
-        }
-        public static void NodePutSynonyms(string node_url, SynonymsData data)
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(node_url);
-
-                var content = new StringContent(Compress(JsonConvert.SerializeObject(data)), Encoding.UTF8);
-                var result = client.PostAsync("/Node/PutSynonyms", content).Result;
-                var t = result.Content.ReadAsStringAsync().Result;
-            }
-        }
-
-        //public static void NodeIndexThese(string node_url, List<string> links)
-        //{
-        //    using (var client = new HttpClient())
-        //    {
-        //        client.BaseAddress = new Uri(node_url);
-
-        //        var content = new StringContent(Compress(JsonConvert.SerializeObject(links)), Encoding.UTF8);
-        //        var result = client.PostAsync("/Node/IndexThese", content).Result;
-        //        var t = result.Content.ReadAsStringAsync().Result;
-        //    }
-        //}
-
-        //public static void MasterProceedResults(string master_url, List<CrawlResult> results)
-        //{
-        //    using (var client = new HttpClient())
-        //    {
-        //        client.BaseAddress = new Uri(master_url);
-        //        var content = new StringContent(Utils.Util.Compress(JsonConvert.SerializeObject(results)), Encoding.UTF8);
-        //        var result = client.PostAsync("/Master/MasterProceedResults", content).Result;
-        //        var t = result.Content.ReadAsStringAsync().Result;
-        //    }
-        //}
-
-        //public static int GetNodesLinksCount(string node_url)
-        //{
-        //    using (var client = new HttpClient())
-        //    {
-        //        client.BaseAddress = new Uri(node_url);
-        //        var res = client.GetAsync("/Node/GetLinkNumber").Result;
-        //        return Convert.ToInt32(res.Content.ReadAsStringAsync().Result);
-        //    }
-        //}
-
-        //public static string GetNodesStats(string node_url)
-        //{
-        //    using (var client = new HttpClient())
-        //    {
-        //        client.BaseAddress = new Uri(node_url);
-        //        var res = client.GetAsync("/Node/GetStats").Result;
-        //        return res.Content.ReadAsStringAsync().Result;
-        //    }
-        //}
-
         public static string SearchNode(string node_url, SearchData data)
         {
             using (var client = new HttpClient())
@@ -91,35 +25,6 @@ namespace WebMvc.Controllers
                 new KeyValuePair<string, string>("data_json", JsonConvert.SerializeObject(data))
             });
                 var result = client.PostAsync("/Node/SearchNode", content).Result;
-                return result.Content.ReadAsStringAsync().Result;
-            }
-        }
-
-        public static string GetNodesLog(string node_url)
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(node_url);
-                var result = client.GetAsync("/Node/GetNodesLog").Result;
-                return result.Content.ReadAsStringAsync().Result;
-            }
-        }
-        public static string GetNodesSlow(string node_url)
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(node_url);
-                var result = client.GetAsync("/Node/GetNodesSlow").Result;
-                return result.Content.ReadAsStringAsync().Result;
-            }
-        }
-
-        public static string GetNodesErrors(string node_url)
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(node_url);
-                var result = client.GetAsync("/Node/GetNodesErrors").Result;
                 return result.Content.ReadAsStringAsync().Result;
             }
         }

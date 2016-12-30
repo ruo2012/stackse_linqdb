@@ -1,4 +1,4 @@
-<h2>Toy search engine for stackoverflow's data powered by Linqdb.</h2>
-<h3>This is not the code behind stackse.com. This is a toy project whose goal was to test linqdb.</h3>
-Linqdb: https://github.com/ren85/linqdb
+<h2>Search engine for stackoverflow's data powered by Linqdb. Designed to search for special characters.</h2>
+This code in action: <a href="http:stackse.com">http://stackse.com/</a><br/><br/>
+Linqdb: https://github.com/ren85/linqdb <br/><br/>
 Data from: https://archive.org/download/stackexchange
