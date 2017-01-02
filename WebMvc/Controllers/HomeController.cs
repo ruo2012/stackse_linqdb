@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
@@ -215,6 +216,10 @@ namespace WebMvc.Controllers
         public ActionResult Log()
         {
             return View(MvcApplication.GetLogEvents());
+        }
+        public ActionResult Hello()
+        {
+            return View(MvcApplication.GetLogEventsHello());
         }
     }
 }

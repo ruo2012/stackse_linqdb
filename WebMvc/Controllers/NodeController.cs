@@ -3,6 +3,7 @@ using Search;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -24,7 +25,10 @@ namespace WebMvc.Controllers
 
             if (data.TitleSearch)
             {
+                Stopwatch sp = new Stopwatch();
+                sp.Start();
                 var tres = SearchApi.SearchTitles(data.Query);
+                
 
                 var title_links = tres.Select(f => new WebMvc.Models.Result()
                 {
@@ -37,10 +41,15 @@ namespace WebMvc.Controllers
                 .ToList();
 
                 data.Links = title_links;
+                sp.Stop();
+                data.NodeTimeInMs = sp.ElapsedMilliseconds;
             }
             else
             {
+                Stopwatch sp = new Stopwatch();
+                sp.Start();
                 var mres = SearchApi.SearchMain(data.Query);
+
                 var main_links = mres.Select(z => new WebMvc.Models.Result()
                 {
                     IsMeta = false,
@@ -52,6 +61,8 @@ namespace WebMvc.Controllers
                 })
                 .ToList();
                 data.Links = main_links;
+                sp.Stop();
+                data.NodeTimeInMs = sp.ElapsedMilliseconds;
             }
             return JsonConvert.SerializeObject(data);
         }

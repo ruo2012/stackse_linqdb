@@ -418,10 +418,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>03/03/2016 16:31:23</publishTime>
     </File>
     <File Include="bin/Search.dll">
-      <publishTime>12/30/2016 16:48:51</publishTime>
+      <publishTime>01/02/2017 14:49:59</publishTime>
     </File>
     <File Include="bin/StackData.dll">
-      <publishTime>12/30/2016 16:48:51</publishTime>
+      <publishTime>01/02/2017 14:49:59</publishTime>
     </File>
     <File Include="bin/StemmersNet.dll">
       <publishTime>03/03/2016 16:31:23</publishTime>
@@ -463,7 +463,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/29/2016 15:38:21</publishTime>
     </File>
     <File Include="bin/WebMvc.dll">
-      <publishTime>12/30/2016 16:48:51</publishTime>
+      <publishTime>01/02/2017 14:49:59</publishTime>
     </File>
     <File Include="bin/zh-Hans/Microsoft.Data.Edm.resources.dll">
       <publishTime>03/03/2016 16:31:22</publishTime>
@@ -597,6 +597,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Views/Home/Errors.cshtml">
       <publishTime>03/03/2016 16:31:21</publishTime>
     </File>
+    <File Include="Views/Home/Hello.cshtml">
+      <publishTime>01/02/2017 14:34:37</publishTime>
+    </File>
     <File Include="Views/Home/Index.cshtml">
       <publishTime>12/29/2016 18:04:54</publishTime>
     </File>
@@ -628,7 +631,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/29/2016 15:38:19</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>12/30/2016 16:49:03</publishTime>
+      <publishTime>01/02/2017 14:50:07</publishTime>
     </File>
   </ItemGroup>
 </Project>

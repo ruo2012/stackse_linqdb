@@ -14,6 +14,7 @@ namespace WebMvc.Models
         public bool TitleSearch { get; set; }
         public long TimeInMs { get; set; }
         public string Node { get; set; }
+        public long NodeTimeInMs { get; set; }
     }
 
     public class Result

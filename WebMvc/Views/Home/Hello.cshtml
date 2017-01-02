@@ -1,0 +1,24 @@
+﻿@model List<WebMvc.Models.LogEvent>
+@{
+    ViewBag.Title = "Hello Log";
+}
+
+<h2>Log</h2>
+
+<table>
+    <tr>
+        <td><b>Type</b></td>
+        <td><b>Date</b></td>
+        <td><b>Title</b></td>
+        <td><b>Description</b></td>
+    </tr>
+    @foreach (var log in Model.OrderByDescending(f => f.Time))
+    {
+        <tr>
+            <td>@log.Type</td>
+            <td>@log.Time.ToString("yy-MM-dd HH:mm")</td>
+            <td>@Html.Raw(log.ShortInfo)</td>
+            <td><pre>@Html.Raw(log.MoreInfo)</pre></td>
+        </tr>
+    }
+</table>

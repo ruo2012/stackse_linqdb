@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Web;
 using System.Web.Hosting;
@@ -24,6 +25,8 @@ namespace WebMvc
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            ServicePointManager.DefaultConnectionLimit = 500;
 
             if (ConfigurationManager.AppSettings["IsNode"] == "1")
             {
@@ -51,7 +54,7 @@ namespace WebMvc
             var log_event = new LogEvent()
             {
                 ShortInfo = title + " " + (ex.InnerException != null ? ex.InnerException.Message : ex.Message),
-                MoreInfo = ex.InnerException != null ? ex.InnerException.StackTrace : ex.StackTrace,
+                MoreInfo = (ex.InnerException != null ? ex.InnerException.StackTrace : ex.StackTrace),
                 Time = DateTime.Now,
                 Type = 2
             };
@@ -60,18 +63,19 @@ namespace WebMvc
 
         public static void LogQuery(List<SearchData> res, string query, string type)
         {
+            int log_type = query == "hello world" ? 3 : 1;
             string title = type + ": " + query;
             string details = "Success: " + res.Count(f => f != null && f.Links != null) + " ";
             foreach (var r in res)
             {
-                details += "(" + r.Node.Substring(7, 12)  + " " + r.TimeInMs + " ms " + (r.Links != null ? r.Links.Count() : 0) + ") ";
+                details += "(" + r.Node.Substring(7, 10)  + " " + r.TimeInMs + "(" + r.NodeTimeInMs + ") ms " + (r.Links != null ? r.Links.Count() : 0) + ") ";
             }
             var log_event = new LogEvent()
             {
                 ShortInfo = title,
                 MoreInfo = details,
                 Time = DateTime.Now,
-                Type = 1
+                Type = log_type
             };
             LogInfo(log_event);
         }
@@ -95,7 +99,11 @@ namespace WebMvc
 
         static public List<LogEvent> GetLogEvents(int how_many = 200)
         {
-            return logdb.Table<LogEvent>().OrderByDescending(f => f.Time).Take(how_many).SelectEntity();
+            return logdb.Table<LogEvent>().Where(f => f.Type != 3).OrderByDescending(f => f.Time).Take(how_many).SelectEntity();
+        }
+        static public List<LogEvent> GetLogEventsHello(int how_many = 200)
+        {
+            return logdb.Table<LogEvent>().Where(f => f.Type == 3).OrderByDescending(f => f.Time).Take(how_many).SelectEntity();
         }
     }
 }

@@ -21,9 +21,9 @@ namespace WebMvc.Controllers
             {
                 client.BaseAddress = new Uri(node_url);
                 var content = new FormUrlEncodedContent(new[] 
-            {
-                new KeyValuePair<string, string>("data_json", JsonConvert.SerializeObject(data))
-            });
+                {
+                    new KeyValuePair<string, string>("data_json", JsonConvert.SerializeObject(data))
+                });
                 var result = client.PostAsync("/Node/SearchNode", content).Result;
                 return result.Content.ReadAsStringAsync().Result;
             }
