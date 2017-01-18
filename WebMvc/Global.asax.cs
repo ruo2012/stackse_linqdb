@@ -58,6 +58,10 @@ namespace WebMvc
                 Time = DateTime.Now,
                 Type = 2
             };
+            if (log_event.ShortInfo.Contains("was not found or does not implement IController"))
+            {
+                return;
+            }
             LogInfo(log_event);
         }
 

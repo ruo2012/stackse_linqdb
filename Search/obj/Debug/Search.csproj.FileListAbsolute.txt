@@ -1,0 +1,10 @@
+C:\Users\renbo\Desktop\stackse_linqdb\Search\bin\Debug\Search.dll
+C:\Users\renbo\Desktop\stackse_linqdb\Search\bin\Debug\Search.pdb
+C:\Users\renbo\Desktop\stackse_linqdb\Search\bin\Debug\LinqDb.dll
+C:\Users\renbo\Desktop\stackse_linqdb\Search\bin\Debug\StackData.dll
+C:\Users\renbo\Desktop\stackse_linqdb\Search\bin\Debug\LevelDB.NET.dll
+C:\Users\renbo\Desktop\stackse_linqdb\Search\bin\Debug\protobuf-net.dll
+C:\Users\renbo\Desktop\stackse_linqdb\Search\bin\Debug\StackData.pdb
+C:\Users\renbo\Desktop\stackse_linqdb\Search\obj\Debug\Search.csprojResolveAssemblyReference.cache
+C:\Users\renbo\Desktop\stackse_linqdb\Search\obj\Debug\Search.dll
+C:\Users\renbo\Desktop\stackse_linqdb\Search\obj\Debug\Search.pdb
