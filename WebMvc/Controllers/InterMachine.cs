@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -17,15 +18,26 @@ namespace WebMvc.Controllers
     {
         public static string SearchNode(string node_url, SearchData data)
         {
-            using (var client = new HttpClient())
+            //THIS IS WRONG USAGE OF HttpClient
+            //https://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
+
+            //using (var client = new HttpClient())
+            //{
+            //    client.BaseAddress = new Uri(node_url);
+            //    var content = new FormUrlEncodedContent(new[]
+            //    {
+            //        new KeyValuePair<string, string>("data_json", JsonConvert.SerializeObject(data))
+            //    });
+            //    var result = client.PostAsync("/Node/SearchNode", content).Result;
+            //    return result.Content.ReadAsStringAsync().Result;
+            //}
+
+            using (var client = new WebClient())
             {
-                client.BaseAddress = new Uri(node_url);
-                var content = new FormUrlEncodedContent(new[] 
-                {
-                    new KeyValuePair<string, string>("data_json", JsonConvert.SerializeObject(data))
-                });
-                var result = client.PostAsync("/Node/SearchNode", content).Result;
-                return result.Content.ReadAsStringAsync().Result;
+                client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                var pd = JsonConvert.SerializeObject(data);
+                pd = "data_json=" + HttpUtility.UrlEncode(pd);
+                return client.UploadString(node_url + "/Node/SearchNode", pd);
             }
         }
 
