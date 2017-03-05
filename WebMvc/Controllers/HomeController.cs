@@ -78,119 +78,105 @@ namespace WebMvc.Controllers
                 }
             }
 
-            object _lock = new object();
+
             var res_links = new List<WebMvc.Models.Result>();
 
-            var title_search = Task.Run(() =>
+            //titles
+            Stopwatch titles_sw = new Stopwatch();
+            titles_sw.Start();
+            var nodes = ConfigurationManager.AppSettings["Nodes"] + "";
+            var ns = nodes.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            var data_copy = new SearchData()
             {
-                Stopwatch titles_sw = new Stopwatch();
-                titles_sw.Start();
-                var nodes = ConfigurationManager.AppSettings["Nodes"] + "";
-                var ns = nodes.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                var tasks = new List<Task<SearchData>>();
-                var data_copy = new SearchData()
+                TitleSearch = true,
+                Query = data.Query
+            };
+            var tres = new List<SearchData>();
+            var _tlock = new object();
+            Parallel.ForEach(ns, n =>
+            {
+                try
                 {
-                    TitleSearch = true,
-                    Query = data.Query
-                };
-                foreach (var n in ns)
-                {
-                    var t = Task.Run<SearchData>(() =>
-                        {
-                            try
-                            {
-                                Stopwatch sw = new Stopwatch();
-                                sw.Start();
-                                var res = InterMachine.SearchNode(n, data_copy);
-                                sw.Stop();
-                                var d = JsonConvert.DeserializeObject<SearchData>(res);
-                                d.TimeInMs = sw.ElapsedMilliseconds;
-                                d.Node = n;
-                                return d;
-                            }
-                            catch (Exception ex)
-                            {
-                                HostingEnvironment.QueueBackgroundWorkItem(f => MvcApplication.LogError("Searching titles (" + data_copy.Query + ") " + n, ex));
-                                return null;
-                            }
-                        });
-                    tasks.Add(t);
-                }
-                var log_datas = new List<SearchData>();
-                foreach (var t in tasks)
-                {
-                    if (t.Result != null)
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
+                    var res = InterMachine.SearchNode(n, data_copy);
+                    sw.Stop();
+                    var d = JsonConvert.DeserializeObject<SearchData>(res);
+                    d.TimeInMs = sw.ElapsedMilliseconds;
+                    d.Node = n;
+                    lock (_tlock)
                     {
-                        log_datas.Add(t.Result);
-                    }
-                    if (t.Result != null && t.Result.Links != null)
-                    {
-                        lock (_lock)
-                        {
-                            res_links.AddRange(t.Result.Links);
-                        }
+                        tres.Add(d);
                     }
                 }
-                titles_sw.Stop();
-                HostingEnvironment.QueueBackgroundWorkItem(f => MvcApplication.LogQuery(log_datas, data_copy.Query, "Titles (" + (titles_sw.ElapsedMilliseconds) +" ms)"));
+                catch (Exception ex)
+                {
+                    HostingEnvironment.QueueBackgroundWorkItem(f => MvcApplication.LogError("Searching titles (" + data_copy.Query + ") " + n, ex));
+                }
             });
+            var log_datas = new List<SearchData>();
+            foreach (var t in tres)
+            {
+                if (t != null)
+                {
+                    log_datas.Add(t);
+                }
+                if (t != null && t.Links != null)
+                {
+                    res_links.AddRange(t.Links);
+                }
+            }
+            titles_sw.Stop();
+            HostingEnvironment.QueueBackgroundWorkItem(f => MvcApplication.LogQuery(log_datas, data_copy.Query, "Titles (" + (titles_sw.ElapsedMilliseconds) +" ms)"));
 
-            var main_search = Task.Run(() =>
+            //main
+            if (res_links.Count() < 10)
             {
                 Stopwatch main_sw = new Stopwatch();
                 main_sw.Start();
-                var nodes = ConfigurationManager.AppSettings["Nodes"] + "";
-                var ns = nodes.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                var tasks = new List<Task<SearchData>>();
-                var data_copy = new SearchData()
+                data_copy = new SearchData()
                 {
                     TitleSearch = false,
                     Query = data.Query
                 };
-                foreach (var n in ns)
+                tres = new List<SearchData>();
+                Parallel.ForEach(ns, n =>
                 {
-                    var t = Task.Run<SearchData>(() =>
+                    try
                     {
-                        try
+                        Stopwatch sw = new Stopwatch();
+                        sw.Start();
+                        var res = InterMachine.SearchNode(n, data_copy);
+                        sw.Stop();
+                        var d = JsonConvert.DeserializeObject<SearchData>(res);
+                        d.TimeInMs = sw.ElapsedMilliseconds;
+                        d.Node = n;
+                        lock (_tlock)
                         {
-                            Stopwatch sw = new Stopwatch();
-                            sw.Start();
-                            var res = InterMachine.SearchNode(n, data_copy);
-                            sw.Stop();
-                            var d = JsonConvert.DeserializeObject<SearchData>(res);
-                            d.TimeInMs = sw.ElapsedMilliseconds;
-                            d.Node = n;
-                            return d;
+                            tres.Add(d);
                         }
-                        catch (Exception ex)
-                        {
-                            HostingEnvironment.QueueBackgroundWorkItem(f => MvcApplication.LogError("Searching main (" + data_copy.Query + ") " + n, ex));
-                            return null;
-                        }
-                    });
-                    tasks.Add(t);
-                }
-                var log_datas = new List<SearchData>();
-                foreach (var t in tasks)
-                {
-                    if (t.Result != null)
-                    {
-                        log_datas.Add(t.Result);
                     }
-                    if (t.Result != null && t.Result.Links != null)
+                    catch (Exception ex)
                     {
-                        lock (_lock)
-                        {
-                            res_links.AddRange(t.Result.Links);
-                        }
+                        HostingEnvironment.QueueBackgroundWorkItem(f => MvcApplication.LogError("Searching main (" + data_copy.Query + ") " + n, ex));
+                    }
+                });
+                log_datas = new List<SearchData>();
+                foreach (var t in tres)
+                {
+                    if (t != null)
+                    {
+                        log_datas.Add(t);
+                    }
+                    if (t != null && t.Links != null)
+                    {
+                        res_links.AddRange(t.Links);
                     }
                 }
                 main_sw.Stop();
                 HostingEnvironment.QueueBackgroundWorkItem(f => MvcApplication.LogQuery(log_datas, data_copy.Query, "Main (" + (main_sw.ElapsedMilliseconds) + " ms)"));
-            });
+            }
 
-            title_search.Wait();
-            main_search.Wait();
 
             data.Links = res_links.Where(f => f.IsMeta).OrderByDescending(f => f.Score).Take(10).ToList();
             if (data.Links.Count() < 10)
