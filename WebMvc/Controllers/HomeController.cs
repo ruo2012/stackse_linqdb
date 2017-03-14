@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -54,6 +56,22 @@ namespace WebMvc.Controllers
             return View(data);
         }
 
+        public static string CreateMD5Hash(string input)
+        {
+            // Use input string to calculate MD5 hash
+            MD5 md5 = System.Security.Cryptography.MD5.Create();
+            byte[] inputBytes = System.Text.Encoding.Unicode.GetBytes(input);
+            byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+            // Convert the byte array to hexadecimal string
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hashBytes.Length; i++)
+            {
+                sb.Append(hashBytes[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }
+
         [ValidateInput(false)]
         public ActionResult SearchPage(SearchData data)
         {
@@ -78,6 +96,20 @@ namespace WebMvc.Controllers
                 }
             }
 
+            var recent_hash = CreateMD5Hash(Request.UserHostAddress + " " + data.Query);
+            var dic = MvcApplication._recent_data;
+            if (dic.ContainsKey(recent_hash) && (DateTime.Now - dic[recent_hash]).TotalMilliseconds < 600)
+            {
+                dic[recent_hash] = DateTime.Now;
+                JsonData jd = new JsonData()
+                {
+                    html = "Too many requests...",
+                    meta_res = data.MetaRes,
+                    count = data.Links == null ? 0 : data.Links.Count()
+                };
+                return Json(jd, JsonRequestBehavior.AllowGet);
+            }
+            dic[recent_hash] = DateTime.Now;
 
             var res_links = new List<WebMvc.Models.Result>();
 
@@ -93,7 +125,7 @@ namespace WebMvc.Controllers
             };
             var tres = new List<SearchData>();
             var _tlock = new object();
-            Parallel.ForEach(ns, n =>
+            Parallel.ForEach(ns, new ParallelOptions() { MaxDegreeOfParallelism = -1 }, n =>
             {
                 try
                 {
@@ -140,7 +172,9 @@ namespace WebMvc.Controllers
                     Query = data.Query
                 };
                 tres = new List<SearchData>();
-                Parallel.ForEach(ns, n =>
+                var sw2 = new Stopwatch();
+                sw2.Start();
+                Parallel.ForEach(ns, new ParallelOptions() { MaxDegreeOfParallelism = -1 }, n =>
                 {
                     try
                     {
@@ -161,6 +195,8 @@ namespace WebMvc.Controllers
                         HostingEnvironment.QueueBackgroundWorkItem(f => MvcApplication.LogError("Searching main (" + data_copy.Query + ") " + n, ex));
                     }
                 });
+                sw2.Stop();
+
                 log_datas = new List<SearchData>();
                 foreach (var t in tres)
                 {
@@ -173,8 +209,10 @@ namespace WebMvc.Controllers
                         res_links.AddRange(t.Links);
                     }
                 }
+
                 main_sw.Stop();
-                HostingEnvironment.QueueBackgroundWorkItem(f => MvcApplication.LogQuery(log_datas, data_copy.Query, "Main (" + (main_sw.ElapsedMilliseconds) + " ms)"));
+                HostingEnvironment.QueueBackgroundWorkItem(f => MvcApplication.LogQuery(log_datas, data_copy.Query, "Main (" + (main_sw.ElapsedMilliseconds) + "ms, parallel " + sw2.ElapsedMilliseconds + " ms)"));
+                //HostingEnvironment.QueueBackgroundWorkItem(f => MvcApplication.LogError("Searching additional time: " + sw1.ElapsedMilliseconds + " ms", new Exception("")));
             }
 
 
@@ -184,7 +222,11 @@ namespace WebMvc.Controllers
                 data.Links.AddRange(res_links.Where(f => !f.IsMeta && !data.Links.Any(z => z.Id == f.Id)).OrderByDescending(f => f.Score).Take(10 - data.Links.Count()).ToList());
             }
 
+
             var result = RenderPartialViewToString(this, "SearchPage", data);
+
+
+            
 
             JsonData jdr = new JsonData()
             {

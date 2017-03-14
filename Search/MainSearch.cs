@@ -30,7 +30,7 @@ namespace Search
             sp.Start();
             for (int i = 0; i <= max_step; i += step)
             {
-                var res = db.Table<PostFragment>().Search(f => f.Text, query, false, i, step)
+                var res = db.Table<PostFragment>().Search(f => f.Text, query, i, step)
                             .Select(f => new { f.Id, f.Text, f.QuestionId })
                             .Select(f => new IntermResult { Id = f.Id, Text = f.Text, QuestionId = f.QuestionId });
                 interm.AddRange(res);

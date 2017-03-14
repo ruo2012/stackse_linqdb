@@ -1,6 +1,7 @@
 ﻿using LinqDb;
 using Search;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -37,6 +38,24 @@ namespace WebMvc
                 string log_db_path = @"C:\Users\Administrator\Documents\stackoverflow\LOG";
                 logdb = new Db(log_db_path);
             }
+
+            ThreadPool.SetMinThreads(500, 500);
+
+            _recent_clean_job = new System.Threading.Thread(f =>
+            {
+                while (true)
+                {
+                    try
+                    {
+                        Thread.Sleep(60000);
+                        _recent_data = new System.Collections.Concurrent.ConcurrentDictionary<string, DateTime>();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("ERROR IN CLEANING THREAD " + DateTime.Now + " \n" + ex.Message + " \n" + ex.StackTrace, ex);
+                    }
+                }
+            });
         }
 
 
@@ -48,6 +67,9 @@ namespace WebMvc
                 HostingEnvironment.QueueBackgroundWorkItem(f => LogError("Generic error", httpContext.Error));
             }
         }
+
+        public static Thread _recent_clean_job { get; set; }
+        public static ConcurrentDictionary<string, DateTime> _recent_data = new ConcurrentDictionary<string, DateTime>();
 
         public static void LogError(string title, Exception ex)
         {
