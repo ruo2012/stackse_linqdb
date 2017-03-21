@@ -10,14 +10,17 @@ namespace Search
     public class SearchApi
     {
         static string frag_db = @"C:\Users\Administrator\Documents\stackoverflow\FINAL_DATA";
+        static string post_db = @"C:\Users\Administrator\Documents\stackoverflow\INTERM_DATA";
 
         static Db db { get; set; }
+        static Db db_post { get; set; }
 
         public static void Init()
         {
             if (db == null)
             {
                 db = new Db(frag_db);
+                db_post = new Db(post_db);
             }
         }
         public static void Dispose()
@@ -26,6 +29,8 @@ namespace Search
             {
                 db.Dispose();
                 db = null;
+                db_post.Dispose();
+                db_post = null;
             }
         }
         public static List<ResultItem> SearchTitles(string query)
@@ -36,7 +41,7 @@ namespace Search
         public static List<ResultItem> SearchMain(string query)
         {
             Init();
-            return SearchLogic.SearchFragments(db, query);
+            return SearchLogic.SearchFragments(db, db_post, query);
         }
 
     }

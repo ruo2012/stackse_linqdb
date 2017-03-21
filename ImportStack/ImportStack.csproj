@@ -56,6 +56,9 @@
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\packages\HtmlAgilityPack.1.4.9.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
+    <Reference Include="LinqDb">
+      <HintPath>..\Linqdb\LinqDb.dll</HintPath>
+    </Reference>
     <Reference Include="LinqdbClient">
       <HintPath>..\Linqdb\client\LinqdbClient.dll</HintPath>
     </Reference>

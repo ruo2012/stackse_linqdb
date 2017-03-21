@@ -4,6 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+namespace OldTmp
+{
+    public class WholePost
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public byte[] Text { get; set; }
+        public int Votes { get; set; }
+    }
+}
 namespace StackData
 {
     public class Question
@@ -87,7 +97,7 @@ namespace StackData
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public byte[] Text { get; set; }
+        public string Text { get; set; }
         public int Votes { get; set; }
     }
     public class PostFragment

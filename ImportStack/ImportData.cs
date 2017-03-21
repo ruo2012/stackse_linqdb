@@ -1,4 +1,5 @@
 ﻿using LinqdbClient;
+//using LinqDb;
 using StackData;
 using System;
 using System.Collections.Generic;
@@ -100,7 +101,7 @@ namespace ImportStack
         public static void Import(string base_path)
         {
             //var db = new Db(Path.Combine(base_path, "WHOLE_DATA"));
-            var db = new Db("stackse.cloudapp.net:2055");
+            var db = new Db("40.68.212.137:2055");
             var questions = new List<Question>();
             var answers = new List<Answer>();
             int totalq = 0, totala = 0;

@@ -14,7 +14,7 @@ namespace Search
         {
             var result_items = new List<ResultItem>();
             int count = 0;
-            var res = db.Table<WholePost>().Search(f => f.Title, query).OrderByDescending(f => f.Votes).Take(10).Select(f => new { f.Id, f.Title }, out count);
+            var res = db.Table<OldTmp.WholePost>().Search(f => f.Title, query).OrderByDescending(f => f.Votes).Take(10).Select(f => new { f.Id, f.Title, f.Votes }, out count);
             foreach (var r in res)
             {
                 var afr = db.Table<AnswerFragment>().Where(f => f.Id == r.Id).Select(f => new { f.Text }).FirstOrDefault();
@@ -22,7 +22,8 @@ namespace Search
                 {
                     Title = r.Title,
                     Fragment = afr != null ? Encoding.UTF8.GetString(afr.Text) : "",
-                    Id = r.Id
+                    Id = r.Id,
+                    Score = r.Votes
                 };
 
                 result_items.Add(ri);
