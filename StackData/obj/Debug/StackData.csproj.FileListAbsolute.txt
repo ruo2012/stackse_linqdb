@@ -1,4 +1,0 @@
-C:\Users\renbo\Desktop\stackse_linqdb\StackData\bin\Debug\StackData.dll
-C:\Users\renbo\Desktop\stackse_linqdb\StackData\bin\Debug\StackData.pdb
-C:\Users\renbo\Desktop\stackse_linqdb\StackData\obj\Debug\StackData.dll
-C:\Users\renbo\Desktop\stackse_linqdb\StackData\obj\Debug\StackData.pdb

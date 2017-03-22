@@ -67,21 +67,27 @@ namespace Search
             var results = new List<ResultItem>();
             var interm = new List<IntermResult>();
 
-            int max_step = db.Table<WholePost>().LastStep();
-            int step = 50;
-            Stopwatch sp = new Stopwatch();
-            sp.Start();
-            for (int i = 0; i <= max_step; i += step)
-            {
-                var ids = db.Table<WholePost>().Search(f => f.Text, query, i, step).Select(f => new { f.Id });
-                var answ = db_answer.Table<AnswerFragment>().IntersectListInt(f => f.Id, ids.Select(f => f.Id).ToList()).SelectEntity();
-                var res = answ.Select(f => new IntermResult { Id = f.Id, Text = Encoding.UTF8.GetString(f.Text), QuestionId = f.Id });
-                interm.AddRange(res);
-                if (sp.ElapsedMilliseconds > 1000 || interm.GroupBy(f => f.QuestionId).Count() >= 5)
-                {
-                    break;
-                }
-            }
+            //int max_step = db.Table<WholePost>().LastStep();
+            //int step = 50;
+            //Stopwatch sp = new Stopwatch();
+            //sp.Start();
+            //for (int i = 0; i <= max_step; i += step)
+            //{
+            //    var ids = db.Table<WholePost>().Search(f => f.Text, query, i, step).Select(f => new { f.Id });
+            //    var answ = db_answer.Table<AnswerFragment>().IntersectListInt(f => f.Id, ids.Select(f => f.Id).ToList()).SelectEntity();
+            //    var res = answ.Select(f => new IntermResult { Id = f.Id, Text = Encoding.UTF8.GetString(f.Text), QuestionId = f.Id });
+            //    interm.AddRange(res);
+            //    if (sp.ElapsedMilliseconds > 1000 || interm.GroupBy(f => f.QuestionId).Count() >= 5)
+            //    {
+            //        break;
+            //    }
+            //}
+
+            var ids = db.Table<WholePost>().Search(f => f.Text, query).OrderByDescending(f => f.Votes).Take(5).Select(f => new { f.Id });
+            var answ = db_answer.Table<AnswerFragment>().IntersectListInt(f => f.Id, ids.Select(f => f.Id).ToList()).SelectEntity();
+            var res = answ.Select(f => new IntermResult { Id = f.Id, Text = Encoding.UTF8.GetString(f.Text), QuestionId = f.Id });
+            interm.AddRange(res);
+
             foreach (var r in interm.GroupBy(f => f.QuestionId).OrderByDescending(f => f.First().Score).Take(5))
             {
                 var first_id = r.First().QuestionId;
