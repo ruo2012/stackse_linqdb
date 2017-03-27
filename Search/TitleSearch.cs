@@ -25,9 +25,11 @@ namespace Search
                     Id = r.Id,
                     Score = r.Votes
                 };
-
                 result_items.Add(ri);
-
+            }
+            foreach (var inter in result_items)
+            {
+                inter.Score += GetFragmentScore(inter.Title, query);
             }
             return result_items.OrderByDescending(f => f.Score).Take(5).ToList();
         }

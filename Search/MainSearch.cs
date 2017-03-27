@@ -33,20 +33,25 @@ namespace Search
                             .Select(f => new { f.Id, f.Text, f.QuestionId })
                             .Select(f => new IntermResult { Id = f.Id, Text = f.Text, QuestionId = f.QuestionId });
                 interm.AddRange(res);
-                if (sp.ElapsedMilliseconds > 1000 || interm.GroupBy(f => f.QuestionId).Count() >= 10)
+                if (sp.ElapsedMilliseconds > 1000 || interm.GroupBy(f => f.QuestionId).Count() >= 20)
                 {
                     break;
                 }
             }
-            foreach (var r in interm.GroupBy(f => f.QuestionId).OrderByDescending(f => f.First().Score).Take(5))
+            foreach (var inter in interm)
             {
-                var first_id = r.First().QuestionId;
+                inter.Score += GetFragmentScore(inter.Text, query);
+            }
+            foreach (var r in interm.GroupBy(f => f.QuestionId).OrderByDescending(f => f.OrderByDescending(z => z.Score).First().Score).Take(5))
+            {
+                var q = r.OrderByDescending(z => z.Score).First();
+                var first_id = q.QuestionId;
                 var item = new ResultItem()
                 {
-                    Fragment = r.First().Text,
-                    Id = r.First().QuestionId,
+                    Fragment = q.Text,
+                    Id = q.QuestionId,
                     Title = db.Table<OldTmp.WholePost>().Where(f => f.Id == first_id).Select(f => new { f.Title }).First().Title,
-                    Score = r.First().Score
+                    Score = q.Score
                 };
                 results.Add(item);
             }
@@ -67,41 +72,65 @@ namespace Search
             var results = new List<ResultItem>();
             var interm = new List<IntermResult>();
 
-            //int max_step = db.Table<WholePost>().LastStep();
-            //int step = 50;
-            //Stopwatch sp = new Stopwatch();
-            //sp.Start();
-            //for (int i = 0; i <= max_step; i += step)
-            //{
-            //    var ids = db.Table<WholePost>().Search(f => f.Text, query, i, step).Select(f => new { f.Id });
-            //    var answ = db_answer.Table<AnswerFragment>().IntersectListInt(f => f.Id, ids.Select(f => f.Id).ToList()).SelectEntity();
-            //    var res = answ.Select(f => new IntermResult { Id = f.Id, Text = Encoding.UTF8.GetString(f.Text), QuestionId = f.Id });
-            //    interm.AddRange(res);
-            //    if (sp.ElapsedMilliseconds > 1000 || interm.GroupBy(f => f.QuestionId).Count() >= 5)
-            //    {
-            //        break;
-            //    }
-            //}
-
             var ids = db.Table<WholePost>().Search(f => f.Text, query).OrderByDescending(f => f.Votes).Take(5).Select(f => new { f.Id });
             var answ = db_answer.Table<AnswerFragment>().IntersectListInt(f => f.Id, ids.Select(f => f.Id).ToList()).SelectEntity();
             var res = answ.Select(f => new IntermResult { Id = f.Id, Text = Encoding.UTF8.GetString(f.Text), QuestionId = f.Id });
             interm.AddRange(res);
 
-            foreach (var r in interm.GroupBy(f => f.QuestionId).OrderByDescending(f => f.First().Score).Take(5))
+            foreach (var inter in interm)
             {
-                var first_id = r.First().QuestionId;
+                inter.Score += GetFragmentScore(inter.Text, query);
+            }
+
+            foreach (var r in interm.GroupBy(f => f.QuestionId).OrderByDescending(f => f.OrderByDescending(z => z.Score).First().Score).Take(5))
+            {
+                var q = r.OrderByDescending(z => z.Score).First();
+                var first_id = q.QuestionId;
                 var item = new ResultItem()
                 {
-                    Fragment = r.First().Text,
-                    Id = r.First().QuestionId,
+                    Fragment = q.Text,
+                    Id = q.QuestionId,
                     Title = db_answer.Table<OldTmp.WholePost>().Where(f => f.Id == first_id).Select(f => new { f.Title }).First().Title,
-                    Score = -1000 + r.First().Score,
+                    Score = -50000 + q.Score,
                 };
                 results.Add(item);
             }
 
             return results;
+        }
+
+        static int GetFragmentScore(string fragment, string query)
+        {
+            var qs = query.ToLower().Split(" \t\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            var indexes = new List<int>();
+            var lf = fragment.ToLower();
+            foreach (var w in qs)
+            {
+                int index = lf.IndexOf(w);
+                if (index >= 0)
+                {
+                    indexes.Add(index);
+                }
+            }
+
+            if (!indexes.Any())
+            {
+                return Int32.MaxValue;
+            }
+            int score = 0;
+            int min = indexes.Min();
+            for (int i = 0; i < indexes.Count; i++)
+            {
+                score += (indexes[i] - min);
+            }
+
+            int max = indexes.Max();
+            for (int i = 0; i < indexes.Count; i++)
+            {
+                score += -1 * (indexes[i] - max);
+            }
+
+            return 10000 - score;
         }
     }
 }
