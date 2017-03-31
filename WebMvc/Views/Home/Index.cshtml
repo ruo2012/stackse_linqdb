@@ -10,34 +10,63 @@
         <input type="text" style="max-width:600px;" class="form-control search-query" placeholder="the shorter the better" id="Query" name="Query" value="@Model.Query" />
     </div>
 
+    @if (!MvcApplication.IsMobile)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                document.getElementById("Query").focus();
+            };
+            var total;
+            var submitHandler = function () {
+                total = 1;
+                $("#result").html("<br/><span>Searching...</span>");
+                $("#result_right").html("");
+                var data = $('#data_form').serialize();
+                $.post("/Home/SearchPage", data, function (res) {
+                    var fields = res.html.split("<span>SEPARATOR</span>");
+                    if (fields.length == 2) {
+                        $("#result").html(fields[0]);
+                        $("#result_right").append(fields[1]);
+                    }
+                    else {
+                        $("#result").html(fields[0]);
+                    }                 
+                });
+                return false;
+            }
+        </script>
 
-    <script type="text/javascript">
-        window.onload = function () {
-            document.getElementById("Query").focus();
-        };
-        var total;
-        var submitHandler = function () {
-            total = 1;
-            $("#result").html("<br/><span>Searching...</span>");
-            $("#result_right").html("");
-            var data = $('#data_form').serialize();
-            $.post("/Home/SearchPage", data, function (res) {
-                var fields = res.html.split("<span>SEPARATOR</span>");
-                if (fields.length == 2) {
-                    $("#result").html(fields[0]);
-                    $("#result_right").append(fields[1]);
-                }
-                else {
-                    $("#result").html(fields[0]);
-                }                 
-            });
-            return false;
-        }
-    </script>
 
-
-    <div id="result_right" style="float:right;text-align:justify;margin-top:10px;" class="col-md-6">
-    </div>
-    <div id="result" style="overflow: hidden;text-align:justify;margin-top:10px; /*margin-left:-15px;*/" class="col-md-6">
-    </div>
+        <div id="result_right" style="float:right;text-align:justify;margin-top:10px;" class="col-md-6">
+        </div>
+        <div id="result" style="overflow: hidden;text-align:justify;margin-top:10px; /*margin-left:-15px;*/" class="col-md-6">
+        </div>
+    }
+    else
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                document.getElementById("Query").focus();
+            };
+            var total;
+            var submitHandler = function () {
+                total = 1;
+                $("#result").html("<br/><span>Searching...</span>");
+                var data = $('#data_form').serialize();
+                $.post("/Home/SearchPage", data, function (res) {
+                    var fields = res.html.split("<span>SEPARATOR</span>");
+                    if (fields.length == 2) {
+                        $("#result").html(fields[0] + fields[1]);
+                    }
+                    else {
+                        $("#result").html(fields[0]);
+                    }
+                });
+                return false;
+            }
+        </script>
+        
+        <div id="result" style="text-align:justify;margin-top:10px;" class="col-md-6">
+        </div>
+    }
 </form>

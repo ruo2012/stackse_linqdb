@@ -34,6 +34,7 @@ namespace WebMvc.Controllers
 
             using (var client = new WebClient())
             {
+                client.Encoding = Encoding.UTF8;
                 client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 var pd = JsonConvert.SerializeObject(data);
                 pd = "data_json=" + HttpUtility.UrlEncode(pd);

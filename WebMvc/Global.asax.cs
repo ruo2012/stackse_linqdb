@@ -19,6 +19,14 @@ namespace WebMvc
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        public static bool IsMobile
+        {
+            get
+            {
+                return System.Web.HttpContext.Current.Request.Browser.IsMobileDevice;
+                //return true;
+            }
+        }
         static Db logdb { get; set; }
         protected void Application_Start()
         {
