@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportStack", "ImportStack\ImportStack.csproj", "{7BD8D628-B17C-4840-A773-8B676396B002}"
 EndProject
@@ -9,7 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackData", "StackData\Stac
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CA38229A-6F08-4923-B204-A72941458710}"
 	ProjectSection(SolutionItems) = preProject
+		Linqdb\LevelDB.NET.dll = Linqdb\LevelDB.NET.dll
+		Linqdb\LinqDb.dll = Linqdb\LinqDb.dll
+		Linqdb\LinqDb.pdb = Linqdb\LinqDb.pdb
+		Linqdb\protobuf-net.dll = Linqdb\protobuf-net.dll
 		README.md = README.md
+		Linqdb\ServerSharedData.dll = Linqdb\ServerSharedData.dll
+		Linqdb\ServerSharedData.pdb = Linqdb\ServerSharedData.pdb
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchTest", "SearchTest\SearchTest.csproj", "{5B820858-F030-42EA-8E2A-CB41AEDD2AD5}"
