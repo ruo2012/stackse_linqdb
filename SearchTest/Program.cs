@@ -12,8 +12,33 @@ namespace Search
     {
         static void Main(string[] args)
         {
-            bool title = false;
-            if (title)
+            int what = Convert.ToInt32(Console.In.ReadLine());
+            if (what == 0)
+            {
+                Console.WriteLine("POSSIBLE QUERIES");
+                while (true)
+                {
+                    var query = Console.ReadLine();
+
+                    if (string.IsNullOrEmpty(query))
+                    {
+                        SearchApi.Dispose();
+                        break;
+                    }
+
+                    query = query.ToLower().Trim();
+                    Stopwatch sw_global = new Stopwatch();
+                    sw_global.Start();
+                    var results = SearchApi.GetPossibleQueries(query);
+                    foreach (var item in results)
+                    {
+                        Console.WriteLine("{0}", item);
+                    }
+                    sw_global.Stop();
+                    Console.WriteLine("Time: {0} ms, total {1}" + Environment.NewLine, sw_global.ElapsedMilliseconds, results.Count());
+                }
+            }
+            else if (what == 1)
             {
                 Console.WriteLine("TITLE SEARCH");
                 while (true)
@@ -38,7 +63,7 @@ namespace Search
                     Console.WriteLine("Time: {0} ms, total {1}" + Environment.NewLine, sw_global.ElapsedMilliseconds, results.Count());
                 }
             }
-            else
+            else if (what == 2)
             {
                 Console.WriteLine("MAIN SEARCH");
 

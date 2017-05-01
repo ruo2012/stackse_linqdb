@@ -13,6 +13,18 @@ namespace ImportStack
 {
     class DataPreparation
     {
+        static string GetStemTitle(string title)
+        {
+            StringBuilder stem_title = new StringBuilder();
+            foreach (var w in title.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (!string.IsNullOrEmpty(w))
+                {
+                    stem_title.Append(Utils.GetStemFromWord(w)+" ");
+                }
+            }
+            return stem_title.ToString();
+        }
         public static void MakeSearchableData(string whole_path, string interm_path, string final_path, int start, int total)
         {
             var whole_db = new Db(whole_path);
@@ -49,6 +61,7 @@ namespace ImportStack
                 post.Id = q.Id;
                 post.Title = q.Title + " - " + tag;
                 post.Votes = q.Score;
+                post.TitleStem = GetStemTitle(post.Title);
                 var qtext = RemoveMarkdown(Encoding.UTF8.GetString(q.Body)) + Environment.NewLine;
                 text.Append(qtext);
 

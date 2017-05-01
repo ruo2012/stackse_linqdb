@@ -50,7 +50,7 @@ namespace Search
                 {
                     Fragment = q.Text,
                     Id = q.QuestionId,
-                    Title = db.Table<OldTmp.WholePost>().Where(f => f.Id == first_id).Select(f => new { f.Title }).First().Title,
+                    Title = db.Table<WholePost>().Where(f => f.Id == first_id).Select(f => new { f.Title }).First().Title,
                     Score = q.Score
                 };
                 results.Add(item);
@@ -90,7 +90,7 @@ namespace Search
                 {
                     Fragment = q.Text,
                     Id = q.QuestionId,
-                    Title = db_answer.Table<OldTmp.WholePost>().Where(f => f.Id == first_id).Select(f => new { f.Title }).First().Title,
+                    Title = db_answer.Table<WholePost>().Where(f => f.Id == first_id).Select(f => new { f.Title }).First().Title,
                     Score = -50000 + q.Score,
                 };
                 results.Add(item);
@@ -130,7 +130,7 @@ namespace Search
                 score += -1 * (indexes[i] - max);
             }
 
-            return 10000 - score;
+            return (int)Math.Log(10000 - score);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using LinqdbClient;
-//using LinqDb;
+﻿using LinqDb;
 using StackData;
 using System;
 using System.Collections.Generic;
@@ -100,8 +99,8 @@ namespace ImportStack
 
         public static void Import(string base_path)
         {
-            //var db = new Db(Path.Combine(base_path, "WHOLE_DATA"));
-            var db = new Db("40.68.212.137:2055");
+            var db = new Db(Path.Combine(base_path, "WHOLE_DATA"));
+            //var db = new Db("40.68.212.137:2055");
             var questions = new List<Question>();
             var answers = new List<Answer>();
             int totalq = 0, totala = 0;
@@ -210,26 +209,26 @@ namespace ImportStack
             }
 
             //users
-            var users = new List<User>();
-            foreach (var row in EnumerateRows(Path.Combine(base_path, "Users.xml")))
-            {
-                var user = GetUser(row);
-                if (user.Id == -1)
-                {
-                    continue;
-                }
-                users.Add(user);
-                if (users.Count() > 50000)
-                {
-                    db.Table<User>().SaveBatch(users);
-                    users = new List<User>();
-                }
-            }
-            if (users.Any())
-            {
-                db.Table<User>().SaveBatch(users);
-                users = new List<User>();
-            }
+            //var users = new List<User>();
+            //foreach (var row in EnumerateRows(Path.Combine(base_path, "Users.xml")))
+            //{
+            //    var user = GetUser(row);
+            //    if (user.Id == -1)
+            //    {
+            //        continue;
+            //    }
+            //    users.Add(user);
+            //    if (users.Count() > 50000)
+            //    {
+            //        db.Table<User>().SaveBatch(users);
+            //        users = new List<User>();
+            //    }
+            //}
+            //if (users.Any())
+            //{
+            //    db.Table<User>().SaveBatch(users);
+            //    users = new List<User>();
+            //}
 
             //comments
             var comments = new List<Comment>();

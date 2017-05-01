@@ -43,6 +43,13 @@ namespace Search
             Init();
             return SearchLogic.SearchFragments(db, db_post, query);
         }
-
+        public static List<string> GetPossibleQueries(string query)
+        {
+            Init();
+            var res = SearchLogic.GetAllPossibleQueries(db, query);
+            var list = res.Item1;
+            list.AddRange(res.Item2);
+            return list;
+        }
     }
 }

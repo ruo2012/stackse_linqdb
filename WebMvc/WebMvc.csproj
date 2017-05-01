@@ -41,8 +41,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LinqDb, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="LinqDb">
       <HintPath>..\Linqdb\LinqDb.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
