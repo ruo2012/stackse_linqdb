@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Search;
+using StackData;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -23,6 +24,20 @@ namespace WebMvc.Controllers
             var data = JsonConvert.DeserializeObject<SearchData>(data_json);
             var words = data.Query.Trim().Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
 
+            var cw = new List<string>();
+            foreach (var w in words)
+            {
+                if (!StopWords.IsStopWord(w))
+                {
+                    cw.Add(w);
+                }
+            }
+            data.Query = cw.Distinct().Aggregate((a, b) => a + " " + b);
+            if (string.IsNullOrEmpty(data.Query))
+            {
+                data.Links = new List<Models.Result>();
+                return JsonConvert.SerializeObject(data);
+            }
             if (data.TitleSearch)
             {
                 Stopwatch sp = new Stopwatch();

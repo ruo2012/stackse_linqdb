@@ -177,6 +177,10 @@
       <Project>{91bce824-8023-49ab-ac1d-d56e0437b0f0}</Project>
       <Name>Search</Name>
     </ProjectReference>
+    <ProjectReference Include="..\StackData\StackData.csproj">
+      <Project>{4E6442A6-27BC-40F7-AE7E-A4176F6509D4}</Project>
+      <Name>StackData</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

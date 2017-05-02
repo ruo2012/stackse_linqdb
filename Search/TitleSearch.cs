@@ -15,9 +15,8 @@ namespace Search
             object _lock = new object();
             var result_items = new List<ResultItem>();
             var queries = GetAllPossibleQueries(db, query);
+
             //full
-
-
             int count = 0;
             var res = db.Table<WholePost>().Search(f => f.Title, queries.Item1[0]).OrderByDescending(f => f.Votes).Take(10).Select(f => new { f.Id, f.Title, f.Votes }, out count);
             foreach (var r in res)
@@ -92,21 +91,7 @@ namespace Search
         public static Tuple<List<string>, List<string>> GetAllPossibleQueries(Db db, string query)
         {
             var full = new List<string>();
-            var parts = query.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
-            var words = new List<string>();
-            var stems = new List<string>();
-            foreach (var p in parts.Distinct())
-            {
-                if (string.IsNullOrEmpty(p) || StopWords.IsStopWord(p))
-                {
-                    continue;
-                }
-                words.Add(p);
-                stems.Add(Utils.GetStemFromWord(p));
-            }
-            full.Add(words.Aggregate((a, b) => a + " " + b));
-            var stemmed = new List<string>();
-            //stemmed.Add(stems.Aggregate((a, b) => a + " " + b));
+            var words = query.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
 
             //synonyms
             var syns = new Dictionary<string, List<string>>();
@@ -119,12 +104,14 @@ namespace Search
                     syns[w].AddRange(val.Synonyms.Split("|".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ToList());
                 }
             }
-            full.AddRange(GetQueries(syns, words));
+            if (syns.Any())
+            {
+                full.AddRange(GetQueries(syns, words));
+                full = full.Distinct().OrderBy(f => f.Length).Take(15).ToList();
+            }
             
-            full.Remove(query);
-            full = full.Distinct().OrderBy(f => f.Length).Take(15).ToList();
             full.Insert(0, query);
-            return new Tuple<List<string>, List<string>>(full.Distinct().ToList(), stemmed.Distinct().Take(1).ToList());
+            return new Tuple<List<string>, List<string>>(full.Distinct().ToList(), new List<string>());
         }
 
         static List<string> GetQueries(Dictionary<string, List<string>> syns, List<string> parts)
