@@ -84,6 +84,7 @@
     <Compile Include="ImportData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TFIDF.cs" />
     <Compile Include="Word2Vec.cs" />
   </ItemGroup>
   <ItemGroup>

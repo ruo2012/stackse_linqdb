@@ -109,4 +109,24 @@ namespace StackData
         public string Name { get; set; }
         public string Synonyms { get; set; }
     }
+    public class WordTfIdf
+    {
+        public int Id { get; set; }
+        public int QuestionId { get; set; }
+        public string Word { get; set; }
+        public double TfIdf { get; set; }
+    }
+    public class WordDocFreq
+    {
+        public int Id { get; set; }
+        public int QuestionId { get; set; }
+        public string Word { get; set; }
+        public int Count { get; set; }
+    }
+    //public class WordTotalFreq
+    //{
+    //    public int Id { get; set; }
+    //    public string Word { get; set; }
+    //    public int Count { get; set; }
+    //}
 }
