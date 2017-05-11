@@ -12,13 +12,11 @@ namespace Search
     {
         public static List<ResultItem> SearchTitles(Db db, string query)
         {
-            object _lock = new object();
+            //object _lock = new object();
             var result_items = new List<ResultItem>();
-            var queries = GetAllPossibleQueries(db, query);
 
-            //full
             int count = 0;
-            var res = db.Table<WholePost>().Search(f => f.Title, queries.Item1[0]).OrderByDescending(f => f.Votes).Take(10).Select(f => new { f.Id, f.Title, f.Votes }, out count);
+            var res = db.Table<WholePost>().Search(f => f.Title, query).OrderByDescending(f => f.Votes).Take(10).Select(f => new { f.Id, f.Title, f.Votes }, out count);
             foreach (var r in res)
             {
                 var afr = db.Table<AnswerFragment>().Where(f => f.Id == r.Id).Select(f => new { f.Text }).FirstOrDefault();
@@ -27,59 +25,109 @@ namespace Search
                     Title = r.Title,
                     Fragment = afr != null ? Encoding.UTF8.GetString(afr.Text) : "",
                     Id = r.Id,
-                    Score = (r.Votes < 3 ? 1 : (int)Math.Log(r.Votes)) + 10000
+                    Score = r.Votes + 100
                 };
-                lock (_lock)
-                {
-                    result_items.Add(ri);
-                }
+
+                result_items.Add(ri);
             }
 
-            Parallel.ForEach(queries.Item1.Skip(1), q =>
-            {
-                int count_s = 0;
-                var res_s = db.Table<WholePost>().Search(f => f.Title, q).OrderByDescending(f => f.Votes).Take(10).Select(f => new { f.Id, f.Title, f.Votes }, out count_s);
-                foreach (var r in res_s)
-                {
-                    var afr = db.Table<AnswerFragment>().Where(f => f.Id == r.Id).Select(f => new { f.Text }).FirstOrDefault();
-                    var ri = new ResultItem()
-                    {
-                        Title = r.Title,
-                        Fragment = afr != null ? Encoding.UTF8.GetString(afr.Text) : "",
-                        Id = r.Id,
-                        Score = r.Votes < 3 ? 1 : (int)Math.Log(r.Votes)
-                    };
-                    lock (_lock)
-                    {
-                        result_items.Add(ri);
-                    }
-                }
-            });
-            //stem
-            foreach (var q in queries.Item2)
-            {
-                int count_st = 0;
-                var res_st = db.Table<WholePost>().Search(f => f.TitleStem, q).OrderByDescending(f => f.Votes).Take(10).Select(f => new { f.Id, f.Title, f.Votes }, out count_st);
-                foreach (var r in res_st)
-                {
-                    var afr = db.Table<AnswerFragment>().Where(f => f.Id == r.Id).Select(f => new { f.Text }).FirstOrDefault();
-                    var ri = new ResultItem()
-                    {
-                        Title = r.Title,
-                        Fragment = afr != null ? Encoding.UTF8.GetString(afr.Text) : "",
-                        Id = r.Id,
-                        Score = (r.Votes < 3 ? 1 : (int)Math.Log(r.Votes)) + 5000
-                    };
-                    lock (_lock)
-                    {
-                        result_items.Add(ri);
-                    }
-                }
-            }
+            //stems
+            //var words = query.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            //if (/*result_items.Count() < 10 &&*/ words.Count() > 1)
+            //{
+            //    var stems = new List<string>();
+            //    foreach (var w in words)
+            //    {
+            //        stems.Add(Utils.GetStemFromWord(w));
+            //    }
+            //    var s_query = stems.Aggregate((a, b) => a + " " + b);
+
+            //    res = db.Table<WholePost>().Search(f => f.TitleStem, s_query).OrderByDescending(f => f.Votes).Take(10).Select(f => new { f.Id, f.Title, f.Votes }, out count);
+            //    foreach (var r in res)
+            //    {
+            //        var afr = db.Table<AnswerFragment>().Where(f => f.Id == r.Id).Select(f => new { f.Text }).FirstOrDefault();
+            //        var ri = new ResultItem()
+            //        {
+            //            Title = r.Title,
+            //            Fragment = afr != null ? Encoding.UTF8.GetString(afr.Text) : "",
+            //            Id = r.Id,
+            //            Score = r.Votes + 100
+            //        };
+            //        result_items.Add(ri);
+            //    }
+            //}
+            //var queries = GetAllPossibleQueries(db, query);
+
+            ////full
+            //int count = 0;
+            //var res = db.Table<WholePost>().Search(f => f.Title, queries.Item1[0]).OrderByDescending(f => f.Votes).Take(10).Select(f => new { f.Id, f.Title, f.Votes }, out count);
+            //foreach (var r in res)
+            //{
+            //    var afr = db.Table<AnswerFragment>().Where(f => f.Id == r.Id).Select(f => new { f.Text }).FirstOrDefault();
+            //    var ri = new ResultItem()
+            //    {
+            //        Title = r.Title,
+            //        Fragment = afr != null ? Encoding.UTF8.GetString(afr.Text) : "",
+            //        Id = r.Id,
+            //        Score = (r.Votes < 3 ? 1 : (int)Math.Log(r.Votes)) + 10000
+            //    };
+            //    lock (_lock)
+            //    {
+            //        result_items.Add(ri);
+            //    }
+            //}
+
+            //Parallel.ForEach(queries.Item1.Skip(1), q =>
+            //{
+            //    int count_s = 0;
+            //    var res_s = db.Table<WholePost>().Search(f => f.Title, q).OrderByDescending(f => f.Votes).Take(10).Select(f => new { f.Id, f.Title, f.Votes }, out count_s);
+            //    foreach (var r in res_s)
+            //    {
+            //        var afr = db.Table<AnswerFragment>().Where(f => f.Id == r.Id).Select(f => new { f.Text }).FirstOrDefault();
+            //        var ri = new ResultItem()
+            //        {
+            //            Title = r.Title,
+            //            Fragment = afr != null ? Encoding.UTF8.GetString(afr.Text) : "",
+            //            Id = r.Id,
+            //            Score = r.Votes < 3 ? 1 : (int)Math.Log(r.Votes)
+            //        };
+            //        lock (_lock)
+            //        {
+            //            result_items.Add(ri);
+            //        }
+            //    }
+            //});
+            ////stem
+            //foreach (var q in queries.Item2)
+            //{
+            //    int count_st = 0;
+            //    var res_st = db.Table<WholePost>().Search(f => f.TitleStem, q).OrderByDescending(f => f.Votes).Take(10).Select(f => new { f.Id, f.Title, f.Votes }, out count_st);
+            //    foreach (var r in res_st)
+            //    {
+            //        var afr = db.Table<AnswerFragment>().Where(f => f.Id == r.Id).Select(f => new { f.Text }).FirstOrDefault();
+            //        var ri = new ResultItem()
+            //        {
+            //            Title = r.Title,
+            //            Fragment = afr != null ? Encoding.UTF8.GetString(afr.Text) : "",
+            //            Id = r.Id,
+            //            Score = (r.Votes < 3 ? 1 : (int)Math.Log(r.Votes)) + 5000
+            //        };
+            //        lock (_lock)
+            //        {
+            //            result_items.Add(ri);
+            //        }
+            //    }
+            //}
             foreach (var inter in result_items)
             {
                 inter.Score += TitleScore(inter.Title);
             }
+
+            foreach (var inter in result_items)
+            {
+                inter.Score += GetFragmentScore(inter.Title, query);
+            }
+
             return result_items.GroupBy(f => f.Title).Select(f => f.First()).OrderByDescending(f => f.Score).Take(5).ToList();
         }
 

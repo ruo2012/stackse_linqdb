@@ -51,7 +51,8 @@ namespace WebMvc.Controllers
                     Description = GetWords(f.Fragment, words),
                     Title = GetWords(f.Title, words),
                     Url = "http://stackoverflow.com/questions/" + f.Id,
-                    Id = f.Id
+                    Id = f.Id,
+                    Score = f.Score
                 })
                 .ToList();
 

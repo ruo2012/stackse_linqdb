@@ -223,6 +223,7 @@ namespace WebMvc.Controllers
             }
 
 
+            data.Links = data.Links.OrderByDescending(f => f.Score).ToList();
             var result = RenderPartialViewToString(this, "SearchPage", data);
 
 

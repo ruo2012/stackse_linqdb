@@ -40,7 +40,7 @@ namespace Search
             }
             foreach (var inter in interm)
             {
-                inter.Score += GetFragmentScore(inter.Text, query);
+                inter.Score += /*5000 +*/ GetFragmentScore(inter.Text, query);
             }
             foreach (var r in interm.GroupBy(f => f.QuestionId).OrderByDescending(f => f.OrderByDescending(z => z.Score).First().Score).Take(5))
             {
@@ -55,7 +55,7 @@ namespace Search
                 };
                 results.Add(item);
             }
-
+            
             if (!results.Any())
             {
                 return SearchLogic.SearchPosts(db_post, db, query);
@@ -91,7 +91,7 @@ namespace Search
                     Fragment = q.Text,
                     Id = q.QuestionId,
                     Title = db_answer.Table<WholePost>().Where(f => f.Id == first_id).Select(f => new { f.Title }).First().Title,
-                    Score = -50000 + q.Score,
+                    Score = -50000 + q.Score
                 };
                 results.Add(item);
             }
@@ -101,7 +101,11 @@ namespace Search
 
         static int GetFragmentScore(string fragment, string query)
         {
-            var qs = query.ToLower().Split(" \t\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            var qs = query.ToLower().Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            if (qs.Count() < 2)
+            {
+                return 0;
+            }
             var indexes = new List<int>();
             var lf = fragment.ToLower();
             foreach (var w in qs)
@@ -109,28 +113,40 @@ namespace Search
                 int index = lf.IndexOf(w);
                 if (index >= 0)
                 {
+                    //Console.WriteLine(w+": "+lf+" "+index);
                     indexes.Add(index);
                 }
             }
-
-            if (!indexes.Any())
+            if (indexes.Count() <= 1)
             {
-                return Int32.MaxValue;
+                return -1000;
             }
             int score = 0;
+            score = (qs.Count() - indexes.Count()) * fragment.Length * 4;
+            //penalty for bad order
+            for (int i = 1; i < indexes.Count(); i++)
+            {
+                if (indexes[i] < indexes[i - 1])
+                {
+                    score += 100;
+                }
+            }
             int min = indexes.Min();
+            //Console.WriteLine(min);
             for (int i = 0; i < indexes.Count; i++)
             {
                 score += (indexes[i] - min);
             }
 
             int max = indexes.Max();
+            //Console.WriteLine(max);
             for (int i = 0; i < indexes.Count; i++)
             {
-                score += -1 * (indexes[i] - max);
+                score += (max - indexes[i]);
             }
 
-            return (int)Math.Log(10000 - score);
+
+            return -1 * score;
         }
     }
 }

@@ -4,7 +4,7 @@
 {
     int counter = 0;
     var results = Model.Links;
-    foreach (var result in results)
+    foreach (var result in results.OrderByDescending(f => f.Score))
     {
         counter++;
         if (counter == 6)
@@ -49,7 +49,7 @@
         
         <div>
             <br />
-            <a href="@result.Url">@Html.Raw(title)</a><br />
+            <a href="@result.Url">@Html.Raw(title)</a>&nbsp;&nbsp;-&nbsp;@result.Score<br />
             <span style="font-size:11px;color:gray;">@result.Url</span><br />
             <span style="word-wrap: break-word">@Html.Raw(desc)</span><br />
         </div>
