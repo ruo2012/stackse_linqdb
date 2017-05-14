@@ -10,6 +10,13 @@ namespace ImportStack
 {
     public class TFIDF
     {
+        static string NonReadable
+        {
+            get
+            {
+                return "#~@$^&*=,.!?:;-\"'`()[]<>{}/·–|↑•%°„_\\0123456789";
+            }
+        }
         public static void CalculateTFIDF()
         {
             string db_path = @"C:\Users\Administrator\Documents\stackoverflow\WORDS_DATA";
@@ -18,11 +25,13 @@ namespace ImportStack
             Db db_post = new Db(interm_path);
 
             int step = 10000;
-            int start = db_post.Table<WholePost>().OrderBy(f => f.Id).Select(f => new { f.Id }).Select(f => f.Id).First();
-            int end = db_post.Table<WholePost>().OrderByDescending(f => f.Id).Select(f => new { f.Id }).Select(f => f.Id).First();
+            int start = db_post.Table<WholePost>().OrderBy(f => f.Id).Take(1).Select(f => new { f.Id }).Select(f => f.Id).First();
+            int end = db_post.Table<WholePost>().OrderByDescending(f => f.Id).Take(1).Select(f => new { f.Id }).Select(f => f.Id).First();
             var list = new List<WholePost>();
 
-            for (int i = start; ; i += step)
+            int print_counter = 0;
+            var dic = new Dictionary<string, int>();
+            for (int i = start; ; i += step, print_counter += step)
             {
                 list = db_post.Table<WholePost>().BetweenInt(f => f.Id, i, i + step, BetweenBoundaries.FromInclusiveToExclusive).SelectEntity();
                 if (!list.Any())
@@ -36,75 +45,145 @@ namespace ImportStack
                         break;
                     }
                 }
-                if (i % 100000 == 0)
+                if (print_counter % 50000 == 0)
                 {
-                    Console.WriteLine("phase 1: " + i);
+                    Console.WriteLine("phase 1: " + print_counter);
                 }
-                var words_q_total = new Dictionary<string, WordDocFreq>();
+                int total = 0;
                 foreach (var p in list)
                 {
                     var text = p.Text;
+                    var words = new List<string>();
                     foreach (var word in text.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
                     {
-                        var w = word.ToLower().Trim(" .,?()!:;".ToCharArray());
-                        if (string.IsNullOrEmpty(w))
+                        var w = word.ToLower().Trim(" .,?()!:;'\"[]".ToCharArray());
+                        if (string.IsNullOrEmpty(w) || StopWords.IsStopWord(w) || w.Length > 10 || w.Count(f => NonReadable.Contains(f)) > 3 ||
+                           (w.Count(f => NonReadable.Contains(f)) / (double)w.Length > 0.3 && w.Length > 4))
                         {
                             continue;
                         }
-                        var key = w + " " + p.Id;
-                        if (words_q_total.ContainsKey(key))
+                        words.Add(w);
+                    }
+                    foreach (var w in words.GroupBy(f => f))
+                    {
+                        if (dic.ContainsKey(w.Key))
                         {
-                            words_q_total[key].Count++;
+                            dic[w.Key]++;
                         }
                         else
                         {
-                            words_q_total[key] = new WordDocFreq()
+                            dic[w.Key] = 1;
+                        }
+                        total++;
+                    }
+                }
+            }
+
+
+            dic = dic.Where(f => f.Value > 40).ToDictionary(f => f.Key, f => f.Value);
+
+            //calculate tf-idf
+            var saved_words = new HashSet<string>();
+            int total_docs = db_post.Table<WholePost>().Count();
+            step = 10000;
+            print_counter = 0;
+            int saved_count = 0;
+            int not_saved_count = 0;
+            for (int i = start; ; i += step, print_counter += step)
+            {
+                list = db_post.Table<WholePost>().BetweenInt(f => f.Id, i, i + step, BetweenBoundaries.FromInclusiveToExclusive).SelectEntity();
+                if (!list.Any())
+                {
+                    if (i < end)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (print_counter % 50000 == 0)
+                {
+                    Console.WriteLine("phase 2: " + print_counter);
+                }
+                var saved = new List<WordTfIdf>();
+                foreach (var p in list)
+                {
+                    var text = p.Text;
+                    var words = new List<string>();
+                    foreach (var word in text.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        var w = word.ToLower().Trim(" .,?()!:;'\"[]".ToCharArray());
+                        if (string.IsNullOrEmpty(w) || StopWords.IsStopWord(w) || w.Length > 13 || w.Count(f => NonReadable.Contains(f)) > 3 ||
+                            (w.Count(f => NonReadable.Contains(f)) / (double)w.Length > 0.3 && w.Length > 4))
+                        {
+                            continue;
+                        }
+                        words.Add(w);
+                    }
+                    foreach (var w in words.GroupBy(f => f))
+                    {
+                        if (!dic.ContainsKey(w.Key))
+                        {
+                            continue;
+                        }
+                        double tf = w.Count() < Math.E ? w.Count() : (Math.E + Math.Log(w.Count()));
+                        int wdocs = dic[w.Key];
+                        double tmp = total_docs / (double)wdocs;
+                        double idf = tmp < Math.E ? tmp : (Math.E + Math.Log(tmp));
+                        var tfidf = new WordTfIdf()
+                        {
+                            QuestionId = p.Id,
+                            Word = w.Key,
+                            TfIdf = tf * idf
+                        };
+                        if (tfidf.TfIdf > 17)
+                        {
+                            saved.Add(tfidf);
+                            if (saved.Count() == 5000)
                             {
-                                QuestionId = p.Id,
-                                Word = w,
-                                Count = 1
-                            };
+                                db_words.Table<WordTfIdf>().SaveBatch(saved);
+                                saved = new List<WordTfIdf>();
+                            }
+                            saved_words.Add(tfidf.Word);               
+                            saved_count++;
+                        }
+                        else
+                        {
+                            not_saved_count++;
                         }
                     }
                 }
-                db_words.Table<WordDocFreq>().SaveBatch(words_q_total.Select(f => f.Value).ToList());
+                db_words.Table<WordTfIdf>().SaveBatch(saved);
+                saved = new List<WordTfIdf>();
             }
 
-            //calculate tf-idf
-            int total_docs = db_post.Table<WholePost>().Count();
-            step = 20000;
-            for(int i=0; ; i += step)
+            //convenient representation
+            var saved_data = new List<WordTfIdfData>();
+            foreach (var w in saved_words)
             {
-                var words = db_words.Table<WordDocFreq>().BetweenInt(f => f.Id, i, i + step, BetweenBoundaries.FromInclusiveToExclusive).SelectEntity();
-                if (!words.Any())
+                var l = db_words.Table<WordTfIdf>().Where(f => f.Word == w).SelectEntity();
+                var data = Utils.TfIdfToData(l);
+                var nd = new WordTfIdfData()
                 {
-                    break;
-                }
-                if (i % 100000 == 0)
+                    Word = w,
+                    Data = data
+                };
+                saved_data.Add(nd);
+                if (saved_data.Count() == 50)
                 {
-                    Console.WriteLine("phase 2: " + i);
+                    db_words.Table<WordTfIdfData>().SaveBatch(saved_data);
+                    saved_data = new List<WordTfIdfData>();
                 }
-                var res_list = new List<WordTfIdf>();
-                foreach (var w in words)
-                {
-                    
-                    double tf = w.Count < Math.E ? w.Count : (Math.E + Math.Log(w.Count));
-                    int wdocs = db_words.Table<WordDocFreq>().Where(f => f.Word == w.Word).Count();
-                    double tmp = total_docs / (double)wdocs;
-                    double idf = tmp < Math.E ? tmp : (Math.E + Math.Log(tmp));
-                    var tfidf = new WordTfIdf()
-                    {
-                        QuestionId = w.QuestionId,
-                        Word = w.Word,
-                        TfIdf = tf*idf
-                    };
-                    res_list.Add(tfidf);
-                }
-                db_words.Table<WordTfIdf>().SaveBatch(res_list);
             }
+            db_words.Table<WordTfIdfData>().SaveBatch(saved_data);
+            saved_data = new List<WordTfIdfData>();
 
+            Console.WriteLine("Done. Saved: " + saved_count + " not saved: " + not_saved_count);
             db_words.Dispose();
             db_post.Dispose();
         }
+        
     }
 }

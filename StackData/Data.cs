@@ -116,13 +116,19 @@ namespace StackData
         public string Word { get; set; }
         public double TfIdf { get; set; }
     }
-    public class WordDocFreq
+    public class WordTfIdfData
     {
         public int Id { get; set; }
-        public int QuestionId { get; set; }
         public string Word { get; set; }
-        public int Count { get; set; }
+        public byte[] Data { get; set; }
     }
+    //public class WordDocFreq
+    //{
+    //    public int Id { get; set; }
+    //    public int QuestionId { get; set; }
+    //    public string Word { get; set; }
+    //    public int Count { get; set; }
+    //}
     //public class WordTotalFreq
     //{
     //    public int Id { get; set; }

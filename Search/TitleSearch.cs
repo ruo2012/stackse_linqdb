@@ -10,13 +10,69 @@ namespace Search
 {
     partial class SearchLogic
     {
-        public static List<ResultItem> SearchTitles(Db db, string query)
+        public static List<ResultItem> SearchTitles(Db db, Db db_words, string query)
         {
+            //var tfidf_dic = new Dictionary<string, Dictionary<int, short>>();
+            //HashSet<int> current_set = null;
+            //foreach (var w in query.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+            //{
+            //    var d = db_words.Table<WordTfIdfData>().Where(f => f.Word == w).SelectEntity().FirstOrDefault();
+            //    if (d == null)
+            //    {
+            //        current_set = new HashSet<int>();
+            //    }
+            //    else
+            //    {
+            //        var data = Utils.TfIdfFromData(d.Data);
+            //        tfidf_dic[w] = data.Item1;
+            //        if (current_set == null)
+            //        {
+            //            current_set = data.Item2;
+            //        }
+            //        else
+            //        {
+            //            current_set.IntersectWith(data.Item2);
+            //        }
+            //    }
+            //}
+
+            //if (current_set.Any())
+            //{
+            //    var list = new List<Tuple<int, int>>();
+            //    foreach (var id in current_set)
+            //    {
+            //        int score = 0;
+            //        foreach (var w in query.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+            //        {
+            //            score += tfidf_dic[w][id];
+            //        }
+            //        list.Add(new Tuple<int, int>(id, score));
+            //    }
+
+            //    var result_items_tf = new List<ResultItem>();
+            //    foreach (var id in list.OrderByDescending(f => f.Item2).Take(10))
+            //    {
+            //        var item = db.Table<WholePost>().Where(f => f.Id == id.Item1).Select(f => new { f.Id, f.Title, f.Votes }).First();
+            //        var afr = db.Table<AnswerFragment>().Where(f => f.Id == id.Item1).Select(f => new { f.Text }).FirstOrDefault();
+            //        var ri = new ResultItem()
+            //        {
+            //            Title = item.Title,
+            //            Fragment = afr != null ? Encoding.UTF8.GetString(afr.Text) : "",
+            //            Id = item.Id,
+            //            Score = id.Item2 + 1000000//item.Votes + 100
+            //        };
+
+            //        result_items_tf.Add(ri);
+            //    }
+
+            //    return result_items_tf;
+            //}
+
             //object _lock = new object();
             var result_items = new List<ResultItem>();
 
             int count = 0;
-            var res = db.Table<WholePost>().Search(f => f.Title, query).OrderByDescending(f => f.Votes).Take(10).Select(f => new { f.Id, f.Title, f.Votes }, out count);
+            var res = db.Table<WholePost>().Search(f => f.Title, query).OrderByDescending(f => f.Votes).Take(200).Select(f => new { f.Id, f.Title, f.Votes }, out count);
             foreach (var r in res)
             {
                 var afr = db.Table<AnswerFragment>().Where(f => f.Id == r.Id).Select(f => new { f.Text }).FirstOrDefault();
@@ -25,7 +81,7 @@ namespace Search
                     Title = r.Title,
                     Fragment = afr != null ? Encoding.UTF8.GetString(afr.Text) : "",
                     Id = r.Id,
-                    Score = r.Votes + 100
+                    Score = /*r.Votes +*/ 100
                 };
 
                 result_items.Add(ri);
@@ -126,6 +182,29 @@ namespace Search
             foreach (var inter in result_items)
             {
                 inter.Score += GetFragmentScore(inter.Title, query);
+            }
+
+            //tfidf
+            var dic = new Dictionary<string, Dictionary<int, short>>();
+            foreach (var w in query.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+            {
+                var d = db_words.Table<WordTfIdfData>().Where(f => f.Word == w).SelectEntity().FirstOrDefault();
+                if (d == null)
+                {
+                    continue;
+                }
+                var data = Utils.TfIdfFromData(d.Data);
+                dic[w] = data.Item1;
+            }
+            foreach (var inter in result_items)
+            {
+                foreach (var w in query.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (dic.ContainsKey(w) && dic[w].ContainsKey(inter.Id))
+                    {
+                        inter.Score += dic[w][inter.Id];
+                    }
+                }
             }
 
             return result_items.GroupBy(f => f.Title).Select(f => f.First()).OrderByDescending(f => f.Score).Take(5).ToList();

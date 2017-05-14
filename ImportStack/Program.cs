@@ -29,9 +29,10 @@ namespace ImportStack
             //DataPreparation.MakeSearchableData(whole_path, interm_path, final_path, start, total);
             //DataPreparation.MakeFragments(interm_path, final_path);
 
+            //not used
             //Word2Vec.WriteSynonyms();
 
-            TFIDF.CalculateTFIDF();
+            //TFIDF.CalculateTFIDF();
             Console.WriteLine("Time: {0} min", (DateTime.Now - start_time).TotalMinutes);
         }
     }

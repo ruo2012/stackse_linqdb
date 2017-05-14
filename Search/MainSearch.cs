@@ -18,7 +18,7 @@ namespace Search
     }
     partial class SearchLogic
     {
-        public static List<ResultItem> SearchFragments(Db db, Db db_post, string query)
+        public static List<ResultItem> SearchFragments(Db db, /*Db db_post,*/ Db db_words, string query)
         {
             var results = new List<ResultItem>();
             var interm = new List<IntermResult>();
@@ -33,7 +33,7 @@ namespace Search
                             .Select(f => new { f.Id, f.Text, f.QuestionId })
                             .Select(f => new IntermResult { Id = f.Id, Text = f.Text, QuestionId = f.QuestionId });
                 interm.AddRange(res);
-                if (sp.ElapsedMilliseconds > 1000 || interm.GroupBy(f => f.QuestionId).Count() >= 20)
+                if (sp.ElapsedMilliseconds > 1000 || interm.GroupBy(f => f.QuestionId).Count() >= 1000)
                 {
                     break;
                 }
@@ -42,6 +42,30 @@ namespace Search
             {
                 inter.Score += /*5000 +*/ GetFragmentScore(inter.Text, query);
             }
+
+            //tfidf
+            var dic = new Dictionary<string, Dictionary<int, short>>();
+            foreach (var w in query.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+            {
+                var d = db_words.Table<WordTfIdfData>().Where(f => f.Word == w).SelectEntity().FirstOrDefault();
+                if (d == null)
+                {
+                    continue;
+                }
+                var data = Utils.TfIdfFromData(d.Data);
+                dic[w] = data.Item1;
+            }
+            foreach (var inter in interm)
+            {
+                foreach (var w in query.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (dic.ContainsKey(w) && dic[w].ContainsKey(inter.Id))
+                    {
+                        inter.Score += dic[w][inter.Id];
+                    }
+                }
+            }
+
             foreach (var r in interm.GroupBy(f => f.QuestionId).OrderByDescending(f => f.OrderByDescending(z => z.Score).First().Score).Take(5))
             {
                 var q = r.OrderByDescending(z => z.Score).First();
@@ -55,10 +79,11 @@ namespace Search
                 };
                 results.Add(item);
             }
-            
+
             if (!results.Any())
             {
-                return SearchLogic.SearchPosts(db_post, db, query);
+                //return SearchLogic.SearchPosts(db_post, db, query);
+                return SearchLogic.SearchSubQueries(db, db_words, query);
             }
             else
             {
@@ -66,38 +91,68 @@ namespace Search
             }
         }
 
-        public static List<ResultItem> SearchPosts(Db db, Db db_answer, string query)
+        public static List<ResultItem> SearchSubQueries(Db db, Db db_words, string query)
         {
-
             var results = new List<ResultItem>();
-            var interm = new List<IntermResult>();
-
-            var ids = db.Table<WholePost>().Search(f => f.Text, query).OrderByDescending(f => f.Votes).Take(5).Select(f => new { f.Id });
-            var answ = db_answer.Table<AnswerFragment>().IntersectListInt(f => f.Id, ids.Select(f => f.Id).ToList()).SelectEntity();
-            var res = answ.Select(f => new IntermResult { Id = f.Id, Text = Encoding.UTF8.GetString(f.Text), QuestionId = f.Id });
-            interm.AddRange(res);
-
-            foreach (var inter in interm)
+            var words = query.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Take(5).ToList();
+            var other_queries = new List<string>();
+            for (int i = 0; i < words.Count(); i++)
             {
-                inter.Score += GetFragmentScore(inter.Text, query);
-            }
-
-            foreach (var r in interm.GroupBy(f => f.QuestionId).OrderByDescending(f => f.OrderByDescending(z => z.Score).First().Score).Take(5))
-            {
-                var q = r.OrderByDescending(z => z.Score).First();
-                var first_id = q.QuestionId;
-                var item = new ResultItem()
+                var new_list = new List<string>();
+                for (int j = 0; j < words.Count(); j++)
                 {
-                    Fragment = q.Text,
-                    Id = q.QuestionId,
-                    Title = db_answer.Table<WholePost>().Where(f => f.Id == first_id).Select(f => new { f.Title }).First().Title,
-                    Score = -50000 + q.Score
-                };
-                results.Add(item);
+                    if (i == j)
+                    {
+                        continue;
+                    }
+                    new_list.Add(words[j]);
+                }
+                var nq = new_list.Aggregate((a, b) => a + " " + b);
+                other_queries.Add(nq);
             }
-
+            foreach (var q in other_queries)
+            {
+                var tmp = SearchLogic.SearchTitles(db, db_words, q);
+                results.AddRange(tmp);
+            }
+            foreach (var r in results)
+            {
+                r.Score += -50000;
+            }
             return results;
         }
+        //public static List<ResultItem> SearchPosts(Db db, Db db_answer, string query)
+        //{
+
+        //    var results = new List<ResultItem>();
+        //    var interm = new List<IntermResult>();
+
+        //    var ids = db.Table<WholePost>().Search(f => f.Text, query).OrderByDescending(f => f.Votes).Take(5).Select(f => new { f.Id });
+        //    var answ = db_answer.Table<AnswerFragment>().IntersectListInt(f => f.Id, ids.Select(f => f.Id).ToList()).SelectEntity();
+        //    var res = answ.Select(f => new IntermResult { Id = f.Id, Text = Encoding.UTF8.GetString(f.Text), QuestionId = f.Id });
+        //    interm.AddRange(res);
+
+        //    foreach (var inter in interm)
+        //    {
+        //        inter.Score += GetFragmentScore(inter.Text, query);
+        //    }
+
+        //    foreach (var r in interm.GroupBy(f => f.QuestionId).OrderByDescending(f => f.OrderByDescending(z => z.Score).First().Score).Take(5))
+        //    {
+        //        var q = r.OrderByDescending(z => z.Score).First();
+        //        var first_id = q.QuestionId;
+        //        var item = new ResultItem()
+        //        {
+        //            Fragment = q.Text,
+        //            Id = q.QuestionId,
+        //            Title = db_answer.Table<WholePost>().Where(f => f.Id == first_id).Select(f => new { f.Title }).First().Title,
+        //            Score = -50000 + q.Score
+        //        };
+        //        results.Add(item);
+        //    }
+
+        //    return results;
+        //}
 
         static int GetFragmentScore(string fragment, string query)
         {
